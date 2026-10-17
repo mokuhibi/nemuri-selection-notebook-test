@@ -9,13 +9,14 @@ const modifiers={speed:'おてつだいスピード',ingredient:'食材おてつ
 const ribbonNames=D.ribbons.map(r=>r.name);
 let mapId='cyan',dynamicMapBerries=['','',''];
 const specialtyNames={ingredient:'食材とくい',berry:'きのみとくい',skill:'スキルとくい',all:'オール'};
+let activeFoodCandidate=null;
 let state=C.emptyState(),tab='board',editingSpecies='',activeAssignment='',activeBerryAssignment='',editorBerryContext=null,detailId='',importCandidate=null,blockedRaw=null;
 function toast(message){$('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),3200);}
 function load(){try{const raw=localStorage.getItem(KEY);if(raw){try{state=C.autoAssign(C.validateState(JSON.parse(raw)));}catch(e){blockedRaw=raw;$('storage-warning').hidden=false;$('storage-warning').innerHTML=`保存データを読み込めませんでした。元データは保持されています。保存前にバックアップしてください。 <button class="button" id="recover-raw">元データを書き出す</button> <button class="button" id="reset-corrupt">初期化する</button>`;$('recover-raw').onclick=()=>downloadBlob(new Blob([blockedRaw],{type:'application/json'}),'sleep-recovery.json');$('reset-corrupt').onclick=()=>{if(confirm('元データをバックアップしましたか？現在の保存データを初期化します。')){try{localStorage.removeItem(KEY);blockedRaw=null;$('storage-warning').hidden=true;state=C.emptyState();render();}catch{toast('保存領域を初期化できませんでした');}}};}}}catch{storageWarning('ブラウザの保存機能が利用できません。変更は保存できないため、保存を許可してから利用してください。');}}
 function storageWarning(message){$('storage-warning').hidden=false;$('storage-warning').textContent=message;}
 function commit(next,message){if(blockedRaw!==null){toast('元データの書き出し・初期化、またはバックアップからの復元が必要です');return false;}try{const valid=C.autoAssign(C.validateState(next));valid.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(valid));state=valid;render();if(message)toast(message);return true;}catch(e){toast('保存できませんでした：'+e.message);return false;}}
 function open(id){$(id).showModal();}
-function showTab(name){tab=name;document.querySelectorAll('.view').forEach(x=>x.hidden=x.id!=='view-'+name);document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));$('share-open').hidden=!['board','berries'].includes(name);if(name==='cooking')renderCooking();if(name==='maps')renderMaps();document.body.classList.toggle('compact-board',['board','berries','members'].includes(name));}
+function showTab(name){tab=name;document.querySelectorAll('.view').forEach(x=>x.hidden=x.id!=='view-'+name);document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));const assignment=['board','berries'].includes(name),header=assignment?$('view-'+name).querySelector('.assignment-header'):null;(header?header.querySelector('.section-top'):$('share-home')).append($('share-open'));(header?header.querySelector('.controls-slot'):$('global-controls-home')).append($('simulation-controls'));$('share-open').hidden=!assignment;if(name==='cooking')renderCooking();if(name==='maps')renderMaps();document.body.classList.toggle('compact-board',['board','berries','members'].includes(name));}
 const pokemonName=p=>p.nickname||C.species(p.species)?.name||p.customName||'未入力';
 const speciesName=p=>C.species(p.species)?.name||p.customName||'種族未入力';
 const owner=id=>state.pokemon.find(p=>p.id===state.assignments[id]?.pokemonId);
@@ -34,9 +35,11 @@ function render(){
  $('save-status').textContent=state.updatedAt?'保存済み '+new Date(state.updatedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'未登録';
  renderBoard();renderBerries();renderMembers();renderCooking();renderMaps();renderSources();
 }
+// Food presentation is unrestricted; berry/map type selections remain saved.
+function ingredientViewState(){return C.autoAssign({...state,typeFilters:[]});}
 function renderBerries(){renderTypes('berry-types');renderTargetHeader('berries','berry');$('berry-list').innerHTML=BerryView.render(state,viewOptions.berries);}
 function renderTypes(id){
- $(id).innerHTML=`<summary>タイプ指定 · ${state.typeFilters.length?state.typeFilters.map(t=>BerryView.typeNames[t]).join('・'):'すべて'}</summary><div class="type-options"><button type="button" class="button" data-types-all aria-pressed="${!state.typeFilters.length}">すべて</button>${Object.entries(BerryView.typeNames).map(([id,name])=>`<label><input type="checkbox" data-type-filter="${id}" ${state.typeFilters.includes(id)?'checked':''}>${esc(name)}</label>`).join('')}</div>`;
+ $(id).innerHTML=`<summary title="タイプ指定：${esc(state.typeFilters.length?state.typeFilters.map(t=>BerryView.typeNames[t]).join('・'):'すべて')}">${id==='berry-types'?(state.typeFilters.length?state.typeFilters.map(t=>BerryView.typeNames[t]).join('・'):'全タイプ'):'タイプ指定 · '+(state.typeFilters.length?state.typeFilters.map(t=>BerryView.typeNames[t]).join('・'):'すべて')}</summary><div class="type-options"><button type="button" class="button" data-types-all aria-pressed="${!state.typeFilters.length}">すべて</button>${Object.entries(BerryView.typeNames).map(([id,name])=>`<label><input type="checkbox" data-type-filter="${id}" ${state.typeFilters.includes(id)?'checked':''}>${esc(name)}</label>`).join('')}</div>`;
 }
 function candidateOptions(kind,target,selected){
  const candidates=C.assignmentCandidates(kind,target,state);
@@ -66,15 +69,38 @@ $('berry-assignment-new').onclick=()=>{const id=activeBerryAssignment;$('berry-a
 $('berry-assignment-save').onclick=()=>{const next=clone(state),pid=$('berry-assignment-select').value;if(pid)next.manualAssignments.berry[activeBerryAssignment]=pid;else delete next.manualAssignments.berry[activeBerryAssignment];if(commit(next,'きのみ担当を保存しました'))$('berry-assignment-dialog').close();};
 $('berry-assignment-auto').onclick=()=>resetManual('berry',activeBerryAssignment,'berry-assignment-dialog');
 $('assignment-auto').onclick=()=>resetManual('ingredient',activeAssignment,'assignment-dialog');
-function renderTargetHeader(view,kind){
+function renderTargetHeader(view,kind,viewState=state){
  const total=kind==='berry'?D.berries.length:D.ingredients.length;
- $(view+'-count').textContent=BoardView.targetList(kind,state,{filter:'assigned'}).length+' / '+total;
- document.querySelectorAll(`[data-target-kind="${view}"]`).forEach(b=>b.classList.toggle('selected',b.dataset.targetFilter===viewOptions[view].filter));
+ $(view+'-count').textContent=BoardView.targetList(kind,viewState,{filter:'assigned'}).length+' / '+total;
+ $(view+'-sort').value=viewOptions[view].by+':'+viewOptions[view].direction;
+ document.querySelectorAll(`[data-target-kind="${view}"]`).forEach(b=>{const selected=b.dataset.targetFilter===viewOptions[view].filter;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
 }
 function renderBoard(){
- renderTypes('board-types');renderTargetHeader('board','ingredient');document.body.classList.toggle('compact-board',['board','berries','members'].includes(tab));
- $('board-list').innerHTML=BoardView.render({state,items:BoardView.targetList('ingredient',state,viewOptions.board)});
+ const viewState=ingredientViewState();renderTargetHeader('board','ingredient',viewState);document.body.classList.toggle('compact-board',['board','berries','members'].includes(tab));
+ $('board-list').innerHTML=BoardView.render({state:viewState,items:BoardView.targetList('ingredient',viewState,viewOptions.board)});
+ for(const card of $('board-list').querySelectorAll('article')){
+  const target=card.querySelector('[data-assign]')?.dataset.assign;if(!target)continue;
+  card.dataset.foodCandidates=target;card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-label',C.ingredient(target).name+'の候補を見る');
+  for(const button of card.querySelectorAll('button')){const span=document.createElement('span');for(const attribute of button.attributes)if(!['type','aria-label','title'].includes(attribute.name))span.setAttribute(attribute.name,attribute.value);span.innerHTML=button.innerHTML;button.replaceWith(span);}
+ }
+ if($('food-candidates').open)renderFoodCandidates();
 }
+function foodConditionText(){return `Lv ${state.mode==='current'?'現在':state.mode} · ${state.evolution==='auto'?'リボン込':state.evolution==='final'?'最終進化':'現在'} · キャンチケ ${state.camp?'ON':'OFF'} · げんき${state.energy}`;}
+function openFoodCandidates(target){
+ activeFoodCandidate=target;$('food-candidate-title').textContent=C.ingredient(target).name+'の候補';
+ $('food-candidate-conditions').innerHTML=`<label>Lv<select data-candidate-condition="mode" aria-label="候補の計算レベル">${$('level-select').innerHTML}</select></label><label>進化<select data-candidate-condition="evolution" aria-label="候補の進化想定">${$('evolution-mode').innerHTML}</select></label><label class="candidate-camp"><input type="checkbox" data-candidate-condition="camp">キャンチケ</label>`;
+ renderFoodCandidates();open('food-candidates');
+}
+function renderFoodCandidates(){
+ if(!activeFoodCandidate)return;const viewState=ingredientViewState(),target=activeFoodCandidate,current=viewState.assignments[target]?.pokemonId;
+ $('food-candidate-summary').textContent=foodConditionText();
+ document.querySelectorAll('[data-candidate-condition]').forEach(input=>{const key=input.dataset.candidateCondition;if(key==='camp')input.checked=state.camp;else input.value=state[key];});
+ const candidates=C.assignmentCandidates('ingredient',target,viewState);
+ $('food-candidate-list').innerHTML=candidates.length?candidates.map(({p,r})=>`<li class="candidate-row" data-candidate-id="${esc(p.id)}" data-daily="${r.counts[target]}"><div class="candidate-name"><strong>${esc(BoardView.displaySpecies(p,viewState,r))}</strong>${p.id===current?'<span class="owner-label">担当中</span>':''}${p.nickname?`<small>${esc(p.nickname)}</small>`:''}</div><div class="candidate-meta"><span title="現在Lv.${p.level}">Lv.${C.effectiveLevel(p,state.mode)}</span>${BoardView.composition(p,state.mode,target)}<span class="candidate-foods">${BoardView.miniSlots(p,state.mode,false)}</span><span class="candidate-daily"><b>${BoardView.ingredientCountText(r.counts[target])}</b><small>個/日</small></span></div></li>`).join(''):'<li class="candidate-empty">現在の条件で日量を計算できる登録個体がありません。</li>';
+}
+$('food-candidates').addEventListener('close',()=>{activeFoodCandidate=null;});
+document.addEventListener('keydown',e=>{if(e.target.matches('[data-food-candidates]')&&['Enter',' '].includes(e.key)){e.preventDefault();openFoodCandidates(e.target.dataset.foodCandidates);}});
+
 function renderMembers(){
  $('member-list').innerHTML=state.pokemon.length?state.pokemon.map(p=>`<article class="harvest-tile member-card"><div class="member-meta"><span>${esc(specialtyNames[C.species(p.species)?.specialty]||'種族未入力')}</span><span title="現在の登録レベル">現在Lv.${p.level}</span></div>${BoardView.identity(p,state)}<div class="member-foods">${BoardView.miniSlots(p,state.mode)}<b class="letter-slots">${BoardView.slotLetters(p).join('')}</b></div><div class="member-owned-skills">${p.subskills.map((id,i)=>{const sk=C.skill(id);return `<span class="mini-skill ${sk?'owned':''} rarity-${sk?.rarity||'white'} ${C.slotStatus(p,C.SKILL_LEVELS[i],state.mode)}" title="${esc(sk?.name||'未入力')} / Lv.${C.SKILL_LEVELS[i]}"><small>${C.SKILL_LEVELS[i]}</small> ${esc(BoardView.short[id]||sk?.name||'―')}</span>`;}).join('')}</div><button class="button member-detail" data-detail="${esc(p.id)}">詳細</button></article>`).join(''):'<div class="empty-message" style="grid-column:1/-1"><h3>最初の個体を記録しましょう。</h3><button class="button primary" data-new>+ 登録</button></div>';
 }
@@ -154,7 +180,7 @@ $('editor').addEventListener('close',()=>{hideSpecies();const context=editorBerr
 
 $('pokemon-form').addEventListener('submit',savePokemon);
 $('delete-pokemon').onclick=()=>{const id=$('pokemon-id').value;if(!confirm('この個体と、この個体に紐づく担当設定を削除しますか？'))return;const next=C.removePokemon(state,id);if(commit(next,'個体を削除しました'))$('editor').close();};
-$('board-register').onclick=$('berries-register').onclick=$('add-member').onclick=()=>openEditor();
+$('add-member').onclick=()=>openEditor();
 async function compactOverviewCanvas(snapshot,sort,kind='ingredient'){
  // Share-only four-column layout. CSS pixels and PNG resolution are independent.
  const sheetWidth=576,renderScale=3;
@@ -193,7 +219,7 @@ function showOverview(canvas,blob,kind,count){
  preview.append(actions,info);open('overview-dialog');
 }
 async function exportOverview(kind='ingredient'){
- const snapshot=clone(state),sort=clone(viewOptions[kind==='berry'?'berries':'board']),button=$('share-open'),oldText=button.textContent;button.disabled=true;button.textContent='作成中…';
+ const snapshot=clone(kind==='ingredient'?ingredientViewState():state),sort=clone(viewOptions[kind==='berry'?'berries':'board']),button=$('share-open'),oldText=button.textContent;button.disabled=true;button.textContent='作成中…';
  try{
  const count=BoardView.targetList(kind,snapshot,sort).length;if(!count){toast('表示中の担当カードがありません');return;}
  const canvas=await compactOverviewCanvas(snapshot,sort,kind);
@@ -202,7 +228,7 @@ async function exportOverview(kind='ingredient'){
 }
 
 $('detail-edit').onclick=()=>{$('detail').close();openEditor(detailId);};
-for(const view of ['board','berries']){for(const [suffix,key] of [['order','by'],['direction','direction']])$(view+'-'+suffix).onchange=()=>{viewOptions[view][key]=$(view+'-'+suffix).value;view==='board'?renderBoard():renderBerries();};}
+for(const view of ['board','berries'])$(view+'-sort').onchange=()=>{const [by,direction]=$(view+'-sort').value.split(':');viewOptions[view]={...viewOptions[view],by,direction};view==='board'?renderBoard():renderBerries();};
 $('evolution-mode').onchange=()=>commit({...state,evolution:$('evolution-mode').value});
 $('camp-mode').onchange=()=>commit({...state,camp:$('camp-mode').checked});
 $('final-form-choices').addEventListener('change',e=>{const id=e.target.dataset.finalForm;if(!id)return;const finalForms={...state.finalForms};if(e.target.value)finalForms[id]=e.target.value;else delete finalForms[id];commit({...state,finalForms});});
@@ -218,10 +244,10 @@ $('backup-menu').onclick=()=>{backupImportVersion++;importCandidate=null;$('impo
 
 $('export-backup').onclick=exportBackup;$('import-backup').onchange=importBackup;
 $('share-open').onclick=()=>exportOverview(tab==='berries'?'berry':'ingredient');
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.close)$(b.dataset.close).close();if(b.dataset.tab)showTab(b.dataset.tab);if(b.dataset.level)commit({...state,mode:b.dataset.level});if(b.dataset.targetFilter){const view=b.dataset.targetKind;viewOptions[view].filter=b.dataset.targetFilter;view==='board'?renderBoard():renderBerries();}if(b.hasAttribute('data-types-all'))commit({...state,typeFilters:[]});if(b.dataset.mapDisplay)commit({...state,mapDisplay:b.dataset.mapDisplay});if(b.dataset.detail)openDetail(b.dataset.detail);if(b.dataset.assign)openAssignment(b.dataset.assign);if(b.dataset.berryAssign)openBerryAssignment(b.dataset.berryAssign);if(b.hasAttribute('data-new'))openEditor();if(b.hasAttribute('data-conditions'))$('condition-open').click();});
-document.addEventListener('change',e=>{const type=e.target.dataset.typeFilter;if(!type)return;const types=new Set(state.typeFilters);e.target.checked?types.add(type):types.delete(type);commit({...state,typeFilters:[...types]});});
+document.addEventListener('click',e=>{const card=e.target.closest('#board-list [data-food-candidates]');if(card){openFoodCandidates(card.dataset.foodCandidates);return;}const b=e.target.closest('button');if(!b)return;if(b.dataset.close)$(b.dataset.close).close();if(b.dataset.tab)showTab(b.dataset.tab);if(b.dataset.level)commit({...state,mode:b.dataset.level});if(b.dataset.targetFilter){const view=b.dataset.targetKind;viewOptions[view].filter=b.dataset.targetFilter;view==='board'?renderBoard():renderBerries();}if(b.hasAttribute('data-types-all'))commit({...state,typeFilters:[]});if(b.dataset.mapDisplay)commit({...state,mapDisplay:b.dataset.mapDisplay});if(b.dataset.detail)openDetail(b.dataset.detail);if(b.dataset.assign)openAssignment(b.dataset.assign);if(b.dataset.berryAssign)openBerryAssignment(b.dataset.berryAssign);if(b.hasAttribute('data-new'))openEditor();if(b.hasAttribute('data-conditions'))$('condition-open').click();});
+document.addEventListener('change',e=>{const condition=e.target.dataset.candidateCondition;if(condition){commit({...state,[condition]:condition==='camp'?e.target.checked:e.target.value});return;}const type=e.target.dataset.typeFilter;if(!type)return;const types=new Set(state.typeFilters);e.target.checked?types.add(type):types.delete(type);commit({...state,typeFilters:[...types]});});
 window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{const incoming=C.validateState(JSON.parse(e.newValue));if(document.querySelector('dialog[open]')){storageWarning('別のタブでデータが更新されました。再読み込みしてから編集してください。');blockedRaw=e.newValue;}else{state=C.autoAssign(incoming);render();toast('別のタブの変更を反映しました');}}catch{storageWarning('別のタブで保存データが変わりました。再読み込みしてください。');blockedRaw=e.newValue;}}});
 document.addEventListener('error',e=>{if(e.target.matches?.('.portrait img'))e.target.replaceWith(document.createTextNode('◇'));},true);
-if(TEST)document.querySelector('.local-indicator').textContent='動作確認用・本番データと別保存';
+if(TEST){document.title+='（動作確認用）';$('save-status').title='動作確認用・通常データと別保存';}
 load();render();showTab(tab);
 })();
