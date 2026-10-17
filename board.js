@@ -43,6 +43,14 @@ function render({state,list=D.ingredients,sort='default',items=null}){
  const owner=id=>state.pokemon.find(p=>p.id===state.assignments[id]?.pokemonId);
  return (items||orderedIngredients(sort)).map(ing=>{const p=owner(ing.id),match=list.some(i=>i.id===ing.id),result=p?C.assignmentResult('ingredient',p,ing.id,state):null;return `<article class="harvest-tile composition-design heading-left ${p?'assigned':'unassigned'} ${match?'':'search-muted'}" aria-label="${esc(ing.name)}の担当">${ingredientWatermark(ing.id)}<div class="food-card-head"><h3 class="food-card-title food-divider">${p?`<span class="food-title-text" title="${esc(ing.name)}">${esc(ing.name)}</span>`:`<button class="food-title-text empty-ingredient" data-assign="${ing.id}" aria-label="${esc(ing.name)}の担当を登録">${esc(ing.name)}</button>`}</h3>${p?`<div class="compact-top food-production-row">${composition(p,state.mode,ing.id)}${dailyHTML(p,state,ing.id,result)}</div></div>${identity(p,state,'ingredient',result,true)}${skills(p,state.mode)}`:`<div class="compact-top food-production-row empty-food-top"><span>―</span><button class="target-yield" data-assign="${ing.id}" aria-label="${esc(ing.name)}の担当を選ぶ"><b class="empty-food-count">―</b></button></div></div>`}</article>`;}).join('');
 }
+// Match the approved preview: change only the header layout, retaining its
+// original responsive height so names, ribbon, skills and SVG stay in place.
+function layoutFoodHeaders(container){
+ const heads=[...container.querySelectorAll('.food-card-head,.restored-food-head')].filter(head=>head.getBoundingClientRect().width>0);
+ for(const head of heads){head.classList.replace('restored-food-head','food-card-head');head.style.removeProperty('height');}
+ const heights=heads.map(head=>head.getBoundingClientRect().height);
+ heads.forEach((head,i)=>{head.classList.replace('food-card-head','restored-food-head');head.style.height=heights[i]+'px';});
+}
 // Share-only aliases: resolve the already simulated display name to its master ID.
 function shareNameHTML(name){
  const sizes={GOURGEIST_SMALL:'こだま',GOURGEIST_MEDIUM:'ちゅうだま',GOURGEIST_LARGE:'おおだま',GOURGEIST_JUMBO:'ギガだま'},sp=D.pokemon.find(p=>p.name===name),size=sp&&sizes[sp.id];
@@ -56,5 +64,5 @@ function targetList(kind,state,options={}){
  const assigned=i=>state.pokemon.some(p=>p.id===assignments[i.id]?.pokemonId&&!C.assignmentResult(kind,p,i.id,state).excluded);
  return items.filter(i=>!options.filter||options.filter==='all'||options.filter==='assigned'&&assigned(i)||options.filter==='empty'&&!assigned(i));
 }
-root.BoardView={skillDisplayStatus,shareNameHTML,composition,ingredientCountText,sleepRibbon,short,targetList,displaySpecies,identity,evaluationSkills,orderedIngredients,render,time,nature,skills,miniSlots,slotLetters,letterSlots,daily};
+root.BoardView={layoutFoodHeaders,skillDisplayStatus,shareNameHTML,composition,ingredientCountText,sleepRibbon,short,targetList,displaySpecies,identity,evaluationSkills,orderedIngredients,render,time,nature,skills,miniSlots,slotLetters,letterSlots,daily};
 })(globalThis);

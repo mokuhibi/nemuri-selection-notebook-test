@@ -16,7 +16,7 @@ function load(){try{const raw=localStorage.getItem(KEY);if(raw){try{state=C.auto
 function storageWarning(message){$('storage-warning').hidden=false;$('storage-warning').textContent=message;}
 function commit(next,message){if(blockedRaw!==null){toast('元データの書き出し・初期化、またはバックアップからの復元が必要です');return false;}try{const valid=C.autoAssign(C.validateState(next));valid.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(valid));state=valid;render();if(message)toast(message);return true;}catch(e){toast('保存できませんでした：'+e.message);return false;}}
 function open(id){$(id).showModal();}
-function showTab(name){tab=name;document.querySelectorAll('.view').forEach(x=>x.hidden=x.id!=='view-'+name);document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));const assignment=['board','berries'].includes(name),header=assignment?$('view-'+name).querySelector('.assignment-header'):null;(header?header.querySelector('.section-top'):$('share-home')).append($('share-open'));(header?header.querySelector('.controls-slot'):$('global-controls-home')).append($('simulation-controls'));$('share-open').hidden=!assignment;if(name==='cooking')renderCooking();if(name==='maps')renderMaps();document.body.classList.toggle('compact-board',['board','berries','members'].includes(name));}
+function showTab(name){tab=name;document.querySelectorAll('.view').forEach(x=>x.hidden=x.id!=='view-'+name);document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));const assignment=['board','berries'].includes(name),header=assignment?$('view-'+name).querySelector('.assignment-header'):null;(header?header.querySelector('.section-top'):$('share-home')).append($('share-open'));(header?header.querySelector('.controls-slot'):$('global-controls-home')).append($('simulation-controls'));$('share-open').hidden=!assignment;if(name==='cooking')renderCooking();if(name==='maps')renderMaps();document.body.classList.toggle('compact-board',['board','berries','members'].includes(name));BoardView.layoutFoodHeaders(document);}
 const pokemonName=p=>p.nickname||C.species(p.species)?.name||p.customName||'未入力';
 const speciesName=p=>C.species(p.species)?.name||p.customName||'種族未入力';
 const owner=id=>state.pokemon.find(p=>p.id===state.assignments[id]?.pokemonId);
@@ -84,6 +84,7 @@ function renderBoard(){
   card.dataset.foodCandidates=target;card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-label',C.ingredient(target).name+'の候補を見る');
   for(const button of card.querySelectorAll('button')){const span=document.createElement('span');for(const attribute of button.attributes)if(!['type','aria-label','title'].includes(attribute.name))span.setAttribute(attribute.name,attribute.value);span.innerHTML=button.innerHTML;button.replaceWith(span);}
  }
+ BoardView.layoutFoodHeaders($('board-list'));
  if($('food-candidates').open)renderFoodCandidates();
 }
 function renderFoodCollection(viewState){
@@ -121,6 +122,7 @@ function renderMaps(){
  $('map-note').textContent=(map.dynamic?'好物が固定ではないため、実際の3種類を選択してください。 ':'')+'好きなきのみの1日エナジー（基本倍率2倍）。きのみ担当は通常エナジー。フィールド・EX固有・イベント追加補正は含みません。';
  $('map-list').hidden=state.mapDisplay==='ingredient';$('map-ingredients').hidden=state.mapDisplay==='berry';$('map-ingredients').innerHTML=BoardView.render({state,items:BoardView.targetList('ingredient',state,{...viewOptions.board,filter:'all'})});
  $('map-list').innerHTML=ids.length?BerryView.render(state,{items:ids.map(C.berry),map:{id:map.id,selected:dynamicMapBerries}}):'<p class="muted">好物きのみを選ぶと担当を表示します。</p>';
+ BoardView.layoutFoodHeaders($('map-ingredients'));
 }
 $('map-select').onchange=()=>{mapId=$('map-select').value;renderMaps();};
 $('map-favorites').addEventListener('change',e=>{if(e.target.dataset.mapBerry===undefined)return;dynamicMapBerries[Number(e.target.dataset.mapBerry)]=e.target.value;renderMaps();});
@@ -191,7 +193,7 @@ async function compactOverviewCanvas(snapshot,sort,kind='ingredient'){
  const frame=document.createElement('iframe');frame.title='一覧画像の生成';frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;frame.style.cssText=`position:fixed;left:-14000px;top:0;width:${sheetWidth}px;height:900px;border:0;pointer-events:none`;
  const ready=new Promise((resolve,reject)=>{frame.onload=resolve;frame.onerror=()=>reject(new Error('画像用スタイルを読み込めませんでした'));});
  const sheetURL=new URL(document.querySelector('link[rel="stylesheet"]').href,location.href).href;
- frame.srcdoc=`<!doctype html><html lang="ja"><head><meta charset="utf-8"><link rel="stylesheet" href="${sheetURL}"><link rel="stylesheet" href="${new URL('note.css?v=20261017-independent-ribbon-v2',location.href).href}"><link rel="stylesheet" href="${new URL('share.css?v=20261017-independent-ribbon-v2',location.href).href}"></head><body class="share-sheet"></body></html>`;
+ frame.srcdoc=`<!doctype html><html lang="ja"><head><meta charset="utf-8"><link rel="stylesheet" href="${sheetURL}"><link rel="stylesheet" href="${new URL('note.css?v=20261017-restored-food-header-v2',location.href).href}"><link rel="stylesheet" href="${new URL('share.css?v=20261017-restored-food-header-v2',location.href).href}"></head><body class="share-sheet"></body></html>`;
  document.body.append(frame);
  try{
  await ready;const doc=frame.contentDocument,body=doc.body;
@@ -203,7 +205,7 @@ async function compactOverviewCanvas(snapshot,sort,kind='ingredient'){
 色付き実線＝計算Lvで解放 / 薄色＝未解放 / 薄灰＝未所持 / ―＝未設定
 通常おてつだい24時間・げんき${snapshot.energy}固定・満杯前回収・本人補正とリボン。スキル/他個体/イベント等なし。各担当の個別試算で、実チームの3食を保証しません。
 データ ${D.meta.version} / 計算 ${kind==='berry'?D.meta.berryCalcVersion:D.meta.calcVersion} / 自動選出 v1`;body.append(note);
- await doc.fonts.ready;
+ await doc.fonts.ready;BoardView.layoutFoodHeaders(grid);
  // srcdoc has an opaque URL; embed local SVG bytes so canvas cloning needs no origin inference.
  await Promise.all([...grid.querySelectorAll('img.ingredient-watermark')].map(async img=>{const response=await fetch(new URL(img.getAttribute('src'),location.href));if(!response.ok)throw new Error('食材アイコンを読み込めませんでした');const svg=(await response.text()).replace('<svg xmlns=', '<svg width="200" height="200" xmlns=');img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);await img.decode();}));
  if(kind==='ingredient'){const credit=doc.createElement('p');credit.className='export-footnote ingredient-icon-credit';credit.textContent='食材アイコン © 2024 / 2025 ちゃんりわ · MIT · 出典 github.com/nitoyon/pokesleep-tool';body.append(credit);}
@@ -258,4 +260,6 @@ window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{const inco
 document.addEventListener('error',e=>{if(e.target.matches?.('.portrait img'))e.target.replaceWith(document.createTextNode('◇'));},true);
 if(TEST){document.title+='（動作確認用）';$('save-status').title='動作確認用・通常データと別保存';}
 load();render();showTab(tab);
+document.fonts.ready.then(()=>BoardView.layoutFoodHeaders(document));
+window.addEventListener('resize',()=>BoardView.layoutFoodHeaders(document));
 })();

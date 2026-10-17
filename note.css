@@ -188,3 +188,7 @@ main{width:100%;margin-left:auto;margin-right:auto}
 .food-collection-group h3{margin:0 0 8px;font-size:16px;color:#27292b}.food-collection-group h3 small{font-weight:400;font-size:11px;color:#878e92;margin-left:5px}
 .food-collection-group .candidate-row{cursor:default}.food-collection-group .candidate-meta .preview-composition{font-size:16px}.food-collection-group .candidate-daily{margin-left:auto}
 @media(max-width:430px){.streamlined-ui .simulation-settings .simulation-group{display:grid;grid-template-columns:1fr}.streamlined-ui .compact-camp-conditions{justify-self:end}.streamlined-ui .compact-options .filter-chips{gap:2px}.streamlined-ui .compact-options .filter-chips button{padding-left:3px;padding-right:3px}.streamlined-ui .compact-level-evolution{gap:4px}.ribbon-control{gap:3px}}
+
+/* Approved restored layout; retain the measured header height and the content below. */
+.harvest-tile .restored-food-head{display:flex;flex-direction:column;justify-content:space-between;flex:none;min-width:0;width:100%;gap:0}
+.harvest-tile .restored-food-head>.food-card-title,.harvest-tile .restored-food-head>.food-production-row{flex:none;width:100%}
