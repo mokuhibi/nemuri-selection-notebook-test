@@ -80,3 +80,10 @@ body.share-sheet{width:576px;padding:8px}
 .share-sheet .level-ribbon{gap:3px}
 .share-sheet .level-ribbon .card-level,.share-sheet .level-ribbon .sleep-ribbon{font-size:10px}
 .share-sheet .harvest-tile .fixed-skills .mini-skill{font-size:9px;padding:1px 0}
+
+/* Food-only header sizing; retain 576px/four columns and existing name/composition fonts. */
+.share-sheet .harvest-tile .food-card-head{min-height:54px;grid-template-rows:minmax(26px,auto) 24px;column-gap:3px}
+.share-sheet .harvest-tile .food-card-head>.food-card-title{gap:3px}
+.share-sheet .harvest-tile .food-card-head .food-divider::after{flex-basis:4px;min-width:4px}
+.share-sheet .harvest-tile .food-card-head .food-title-text{line-height:1.25;text-wrap:balance}
+.share-sheet .harvest-tile .food-card-head .target-yield b,.share-sheet .harvest-tile .food-card-head .empty-food-count{font-size:29px}

@@ -158,3 +158,17 @@ main{width:100%;margin-left:auto;margin-right:auto}
 
 .streamlined-ui #view-board,.streamlined-ui #view-berries{padding-top:12px}
 .streamlined-ui #view-board .assignment-header>.section-top{margin:0 0 3px}
+
+/* Approved food heading: name/rule then composition, with one right-aligned two-row metric.
+   The production wrapper remains in place to preserve the existing composition font rules. */
+.harvest-tile .food-card-head{display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:minmax(20px,auto) 28px;column-gap:7px;row-gap:1px;align-items:center;min-height:54px;width:100%;min-width:0}
+.harvest-tile .food-card-head>.food-card-title{grid-column:1;grid-row:1;min-width:0;margin:0;min-height:20px;align-self:center}
+.harvest-tile .food-card-head .food-title-text{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.35}
+.harvest-tile .food-card-head .food-divider::after{flex:1 0 6px;min-width:6px}
+.harvest-tile .food-card-head>.food-production-row{display:contents}
+.harvest-tile .food-card-head .food-production-row>.preview-composition,.harvest-tile .food-card-head .empty-food-top>span{grid-column:1;grid-row:2;align-self:center;justify-self:start}
+.harvest-tile .food-card-head .food-production-row>.compact-yield,.harvest-tile .food-card-head .empty-food-top>.target-yield{grid-column:2;grid-row:1 / span 2;align-self:stretch;justify-self:end;margin:0;padding:0;display:flex;align-items:center;justify-content:flex-end;text-align:right}
+.harvest-tile .food-card-head .food-production-row>.compact-yield{flex-direction:column;align-items:flex-end;justify-content:center}
+.harvest-tile .food-card-head .compact-yield small{max-width:65px;white-space:normal;text-align:right}
+.harvest-tile .food-card-head .target-yield{display:flex;align-items:center;justify-content:flex-end;align-self:stretch;text-align:right}
+.harvest-tile .food-card-head .target-yield b,.harvest-tile .food-card-head .empty-food-count{font-size:36px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.045em}

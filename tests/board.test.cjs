@@ -115,3 +115,10 @@ assert.equal(B.shareNameHTML('リザードン'),'リザードン');assert.equal(
 
 for(const nature of D.natures)for(const purpose of ['ingredient','berry']){const html=B.nature({...p,nature:nature.id},true,purpose),text=html.replace(/<[^>]*>/g,'');assert(!/[↑↓]/.test(text));for(const [key,label] of purpose==='berry'?[['speed','速']]:[['ingredient','食'],['speed','速']]){if(nature.positiveModifier===key)assert(text.includes(label+'▲'));if(nature.negativeModifier===key)assert(text.includes(label+'▼'));}if(purpose==='berry')assert(!text.includes('食'));}
 console.log('PASS all nature labels: red/up and blue/down symbol hooks, no arrows, berry filtering and neutral state preserved');
+
+assert.equal((compact.match(/class="food-card-head"/g)||[]).length,19);
+assert.equal((compact.match(/class="target-yield"/g)||[]).length,19);
+assert(compact.indexOf('food-card-head')<compact.indexOf('food-card-title'));
+assert(compact.indexOf('food-card-title')<compact.indexOf('food-production-row'));
+assert(compact.indexOf('food-production-row')<compact.indexOf('assignment-identity'));
+console.log('PASS shared food heading: 19 wrappers, one target metric per card, name/composition before unchanged identity');
