@@ -137,3 +137,5 @@ LICENSE.md：BSD-3-Clause。licenses/PokeAPI-BSD-3-Clause.txtに原文を同梱�
 - MIT。Copyright (c) 2024 ちゃんりわ（17種）、Copyright (c) 2025 ちゃんりわ（Pumpkin / Avocado）。著作権表示・許諾文・無保証条項を全SVGと `licenses/nitoyon-ingredient-icons-MIT.txt` に保持。商用利用・改変・再配布を許可するMITの条件に従う。NeroliのApache-2.0とは別扱い。
 - 変更：SVG図形をReact/MUIから抽出、JSX属性をSVG属性へ変換。色・図形・viewBoxは保持。ID対応・各ファイル・変換後ハッシュは `assets/ingredients/SOURCE.md`。
 - 設定からライセンス全文を参照でき、食材共有画像にも作者・MIT・取得元を表示する。性能値・計算・保存形式の変更なし。
+
+- 食材アイコン変換修正（2026-10-17）：Pumpkin / Avocado のグループ図形を展開し、数値JSX属性をSVG属性化。座標・transform・色・著作権・MIT全文は固定版どおり。その他17種は変更なし。詳細と更新ハッシュは `assets/ingredients/SOURCE.md`。

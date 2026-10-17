@@ -22,8 +22,12 @@
 | `Corn` | `Corn.svg` | `src/ui/Resources/CornIcon.tsx` | 2024 | `f9a11f3b93222dd3d5bb263814b9e9480cae784d468a17f5b65475dac39b4c43` |
 | `Cacao` | `Cacao.svg` | `src/ui/Resources/CacaoIcon.tsx` | 2024 | `385a36ea81f089331485ac106107cfd2648353bd1a918a861db578b769889acf` |
 | `Coffee` | `Coffee.svg` | `src/ui/Resources/CoffeeIcon.tsx` | 2024 | `4583ba0a24396a39ee91f1e84205fbb70c1ccc41c13a44f7b3ab234eae25b8c4` |
-| `Avocado` | `Avocado.svg` | `src/ui/Resources/AvocadoIcon.tsx` | 2025 | `68b32b63a48a80a49849f7a497901e82f39649ea4fbd13c43d90236e26a78c17` |
+| `Avocado` | `Avocado.svg` | `src/ui/Resources/AvocadoIcon.tsx` | 2025 | `054ff31dcdce5d27bcb3822b21013b8dde281a04a0ca060b7cf02ea0ed3510cc` |
 | `Mushroom` | `Mushroom.svg` | `src/ui/Resources/MushroomIcon.tsx` | 2024 | `edc8a0098dd48ff0489038ae8e1d82f0c2600856d4ad72be35aa832d1c6eaaac` |
 | `Leek` | `Leek.svg` | `src/ui/Resources/LeekIcon.tsx` | 2024 | `7ea665bfd84cebcb6367b1dc9957a7bc07910dc336fe44401c8ce90699955791` |
-| `Pumpkin` | `Pumpkin.svg` | `src/ui/Resources/PumpkinIcon.tsx` | 2025 | `cddf785ec1f0a415b69f53cd1d196b4057fe49ac3422d2d174ef201a39c7872d` |
+| `Pumpkin` | `Pumpkin.svg` | `src/ui/Resources/PumpkinIcon.tsx` | 2025 | `b8326fae620b25d8470c0648a9efda4066cc0b48ebff0fce98866f9d22ba8cc0` |
 | `Tail` | `Tail.svg` | `src/ui/Resources/TailIcon.tsx` | 2024 | `60962b4b99445890d52866b06a92ee95870f2a54ab778f63c4bd08c6400a2011` |
+
+## 変換修正（2026-10-17）
+
+Pumpkin / Avocado の `<g>` 内の図形を正しく抽出。Reactの未展開参照タグを除去し、数値のJSX属性をSVG属性へ変換。元のtransform・座標・色・MIT全文を維持。読み込み成功だけでなく実図形を検証する。その他17ファイル・ID対応・不透明度・計算・保存形式は変更なし。

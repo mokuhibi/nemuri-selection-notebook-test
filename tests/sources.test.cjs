@@ -28,10 +28,17 @@ for(const ingredient of SleepData.ingredients){
  assert(svg.includes('Permission is hereby granted'));assert(svg.includes('THE SOFTWARE IS PROVIDED'));
  assert(svg.includes('11ebec8de7b7803e5d095e4f32ee29f6bc7db2fb'));assert(svg.includes('viewBox="0 0 200 200"'));
  assert(!/<image|<script|href=/.test(svg));
- assert(iconHTML.includes('src="assets/ingredients/'+ingredient.id+'.svg"'));
+ assert(iconHTML.includes('src="assets/ingredients/'+ingredient.id+'.svg'));
+ const elements=[...svg.matchAll(/<([A-Za-z][A-Za-z0-9-]*)\b/g)].map(m=>m[1]);
+ assert(elements.every(tag=>['svg','g','path','ellipse','circle','rect','polygon','polyline','line','defs','linearGradient','radialGradient','stop','clipPath'].includes(tag)),ingredient.id+' must contain only native SVG, never unresolved React components');
+ assert(elements.some(tag=>['path','ellipse','circle','rect','polygon','polyline','line'].includes(tag)),ingredient.id+' must contain real geometry');
+ assert(!/\w+=\{/.test(svg),ingredient.id+' must not contain JSX attribute expressions');
 }
 assert(iconHTML.includes('aria-hidden="true"'));
 assert(read('app.js').includes('img.decode()'));assert(read('app.js').includes('食材アイコン © 2024 / 2025 ちゃんりわ'));
 assert(read('app.js').includes('href="licenses/nitoyon-ingredient-icons-MIT.txt"'));
 assert(read('licenses/NOTICE.txt').includes('separate MIT-licensed artwork'));
 console.log('PASS all 19 ID-keyed licensed SVG watermarks, authors/years, fixed source, no external image dependency, share decode and settings credit');
+
+for(const id of ['Pumpkin','Avocado']){const svg=read('assets/ingredients/'+id+'.svg');assert(svg.includes('<g transform="scale(3.8)'));assert(svg.includes('fill="'+(id==='Pumpkin'?'#fea712':'#749f3e')+'"'));assert(iconHTML.includes(id+'.svg?v=20261017-grouped'));}
+console.log('PASS grouped Pumpkin/Avocado geometry, transforms, original colors and cache refresh');
