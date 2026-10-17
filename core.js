@@ -27,8 +27,9 @@ function calc(p,mode,energy,options={},target=null){
  if(rows.some(r=>!r.ok))return {ok:false,level:effectiveLevel(p,mode),errors:[...new Set(rows.filter(r=>!r.ok).flatMap(r=>r.errors))]};
  return {...bestForm(rows,r=>r.counts[target]),automatic:true,comparisonTarget:target};
 }
+function effectiveRibbon(p,options={}){return options.ribbonOverride===undefined||options.ribbonOverride===null?p.ribbon:options.ribbonOverride;}
 function production(p,mode,energy,options,withIngredients){
- const level=effectiveLevel(p,mode),errors=[]; const sp=simulatedSpecies(p,options),n=nature(p.nature);
+ const level=effectiveLevel(p,mode),errors=[],ribbonStage=effectiveRibbon(p,options); const sp=simulatedSpecies(p,options),n=nature(p.nature);
  if(!sp)errors.push(options.evolution==='final'&&species(p.species)?'最終進化先を選択してください':'種族を選択してください');
  if(sp?.calculationUnsupported)errors.push(sp.calculationUnsupported);
  if(!Number.isInteger(p.level)||p.level<1)errors.push('現在レベルが未入力です');
@@ -39,13 +40,14 @@ function production(p,mode,energy,options,withIngredients){
  const activeSkills=SKILL_LEVELS.map((v,i)=>level>=v?i:null).filter(x=>x!==null);
  if(withIngredients)for(const i of activeSlots)if(!p.slots[i]||!sp?.slots[i].some(x=>x.id===p.slots[i])) errors.push(`食材${i+1}枠目を選択してください`);
  for(const i of activeSkills)if(!skill(p.subskills[i]))errors.push(`Lv.${SKILL_LEVELS[i]}のサブスキルが未入力です`);
- if(sp?.remainingEvolutions>0&&p.ribbon===null)errors.push('おやすみリボンが未入力です');
+ if(options.ribbonOverride!==undefined&&options.ribbonOverride!==null&&![0,1,2,3,4].includes(options.ribbonOverride))errors.push('リボン条件が不正です');
+ if(sp?.remainingEvolutions>0&&ribbonStage===null)errors.push('おやすみリボンが未入力です');
  if(errors.length)return {ok:false,level,errors};
  const ids=new Set(activeSkills.map(i=>p.subskills[i]));
  const amount=id=>ids.has(id)?skill(id).amount:0;
  const speed=Math.max(.65,1-amount('HELPING_SPEED_S')-amount('HELPING_SPEED_M')-amount('HELPING_BONUS'));
  const rate=sp.ingredientRate*n.ingredient*(1+amount('INGREDIENT_FINDER_S')+amount('INGREDIENT_FINDER_M'));
- const ribbon=D.ribbons.find(x=>x.stage===p.ribbon)?.frequencyByRemainingEvolutions[sp.remainingEvolutions]??1;
+ const ribbon=D.ribbons.find(x=>x.stage===ribbonStage)?.frequencyByRemainingEvolutions[sp.remainingEvolutions]??1;
  const combined=Math.round((2-n.frequency)*speed*(1-.002*(level-1))*ribbon*10000)/10000;
  const baseInterval=Math.floor(combined*sp.frequency/(options.camp?1.2:1));
  const energyFactor=energy>=80?.45:energy>=60?.52:energy>=40?.58:energy>=1?.66:1;
@@ -111,6 +113,8 @@ function assignmentResult(kind,p,target,state){
 function assignmentCandidates(kind,target,state){
  return state.pokemon.map(p=>({p,r:assignmentResult(kind,p,target,state)})).filter(({r})=>r.ok&&(kind==='berry'?r.berryEnergy:r.counts[target])>0).sort((a,b)=>(kind==='berry'?b.r.berryEnergy-a.r.berryEnergy:b.r.counts[target]-a.r.counts[target])||a.p.id.localeCompare(b.p.id));
 }
+// Read-only food collection list: include incomplete eligible records as unknown, never estimate.
+function collectionCandidates(target,state){return state.pokemon.filter(p=>p.slots.some((id,i)=>id===target&&effectiveLevel(p,state.mode)>=ING_LEVELS[i])).map(p=>({p,r:assignmentResult('ingredient',p,target,state)})).filter(({r})=>!r.ok||r.counts[target]>0).sort((a,b)=>{const av=a.r.ok?a.r.counts[target]:-Infinity,bv=b.r.ok?b.r.counts[target]:-Infinity;return av===bv?a.p.id.localeCompare(b.p.id):av>bv?-1:1;});}
 function autoAssign(input){
  const state=JSON.parse(JSON.stringify(input)),history=state.assignmentHistory||{},berryHistory=state.berryAssignmentHistory||{};
  for(const [id,a] of Object.entries(state.assignments))history[id]={...(history[id]||{}),[a.pokemonId]:{...a}};
@@ -198,8 +202,9 @@ function validateState(input){
  const forms=input.finalForms??{};if(!forms||typeof forms!=='object'||Array.isArray(forms))fail('進化先条件が不正です');
  for(const [id,target] of Object.entries(forms)){const p=state.pokemon.find(p=>p.id===id);if(!p||!finalSpecies(p.species).includes(target))continue;state.finalForms[id]=target;}
  state.evolution=input.evolution??'current';state.camp=input.camp??false;
+ if(input.ribbonOverride!==undefined){if(input.ribbonOverride!==null&&![0,1,2,3,4].includes(input.ribbonOverride))fail('リボン試算条件が不正です');state.ribbonOverride=input.ribbonOverride;}
  state.mode=input.mode;state.energy=input.energy;state.recipeId=input.recipeId;state.updatedAt=typeof input.updatedAt==='string'?input.updatedAt:null;
  return state;
 }
-root.SleepCore={ING_LEVELS,SKILL_LEVELS,species,ingredient,berry,nature,skill,effectiveLevel,unlocked,slotStatus,finalSpecies,simulatedSpecies,calc,berryPower,calcBerry,mapFavoriteIds,calcMapBerry,assignmentResult,assignmentCandidates,autoAssign,removePokemon,compare,emptyState,validateState};
+root.SleepCore={ING_LEVELS,SKILL_LEVELS,species,ingredient,berry,nature,skill,effectiveLevel,unlocked,slotStatus,finalSpecies,simulatedSpecies,calc,berryPower,calcBerry,mapFavoriteIds,calcMapBerry,assignmentResult,assignmentCandidates,collectionCandidates,effectiveRibbon,autoAssign,removePokemon,compare,emptyState,validateState};
 })(globalThis);

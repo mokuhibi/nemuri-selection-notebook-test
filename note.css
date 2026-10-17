@@ -172,3 +172,19 @@ main{width:100%;margin-left:auto;margin-right:auto}
 .harvest-tile .food-card-head .compact-yield small{max-width:65px;white-space:normal;text-align:right}
 .harvest-tile .food-card-head .target-yield{display:flex;align-items:center;justify-content:flex-end;align-self:stretch;text-align:right}
 .harvest-tile .food-card-head .target-yield b,.harvest-tile .food-card-head .empty-food-count{font-size:36px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.045em}
+/* Shared note-style operation area: independent evolution and ribbon conditions. */
+.streamlined-ui .site-header{justify-content:flex-start;min-height:78px;padding:22px 20px;border-bottom:1px solid #eceeef}
+.streamlined-ui .brand{font-size:19px;font-weight:750;color:#27292b;gap:10px}
+.streamlined-ui .brand .brand-mark{width:30px;height:30px;border-radius:0;box-shadow:none}
+.streamlined-ui .compact-sort{flex:0 0 100px;max-width:100px;font-size:16px;min-height:50px;color:#858b8d;letter-spacing:-.035em;transform:scale(.88);transform-origin:right center}
+.streamlined-ui .simulation-settings .simulation-group{flex-wrap:wrap;gap:2px 8px}
+.streamlined-ui .compact-level-evolution{flex-wrap:nowrap;gap:6px;min-width:0}
+.streamlined-ui .simulation-settings #evolution-mode{width:76px}
+.ribbon-control{display:flex;align-items:center;gap:4px;font-size:11px;color:#6c7478;white-space:nowrap}
+.streamlined-ui .simulation-settings #ribbon-mode{width:83px;min-width:0;padding:8px 3px;font-size:16px;min-height:44px}
+.streamlined-ui .compact-camp-conditions{margin-left:auto;min-height:36px}
+.member-foods .ingredient-mini-icon{width:22px;height:22px;object-fit:contain;vertical-align:middle}
+.food-collection-group{margin:12px 0 22px;border-top:1px solid #e5e7e8;padding-top:8px}
+.food-collection-group h3{margin:0 0 8px;font-size:16px;color:#27292b}.food-collection-group h3 small{font-weight:400;font-size:11px;color:#878e92;margin-left:5px}
+.food-collection-group .candidate-row{cursor:default}.food-collection-group .candidate-meta .preview-composition{font-size:16px}.food-collection-group .candidate-daily{margin-left:auto}
+@media(max-width:430px){.streamlined-ui .simulation-settings .simulation-group{display:grid;grid-template-columns:1fr}.streamlined-ui .compact-camp-conditions{justify-self:end}.streamlined-ui .compact-options .filter-chips{gap:2px}.streamlined-ui .compact-options .filter-chips button{padding-left:3px;padding-right:3px}.streamlined-ui .compact-level-evolution{gap:4px}.ribbon-control{gap:3px}}

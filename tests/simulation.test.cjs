@@ -37,3 +37,20 @@ const originalRecord=JSON.stringify(ribbonChansey);const chosen=C.calc(ribbonCha
 assert(B.render({state:C.autoAssign({...state,pokemon:[ribbonChansey]}),list:D.ingredients,items:[C.ingredient('Egg')]}).includes('ラッキー'));
 assert.equal(JSON.stringify(ribbonChansey),originalRecord);assert(chosen.counts.Egg>21&&chosen.counts.Egg<22);
 console.log('PASS independent 2000-hour Chansey/Blissey performance trace, both metrics, shared card/ranking result and immutable record');
+
+// An independent ribbon override is equivalent to the same registered stage,
+// without writing it back to the individual or changing either evolution model.
+for(const stage of [0,1,2,3,4])for(const camp of [false,true])for(const evolution of ['current','final','auto']){
+ const p={...chansey,ribbon:0},snapshot=JSON.stringify(p),opts={camp,evolution,ribbonOverride:stage};
+ for(const target of p.slots){const expected=C.calc({...p,ribbon:stage},'60',100,{camp,evolution},target),actual=C.calc(p,'60',100,opts,target);assert.equal(JSON.stringify(actual),JSON.stringify(expected));}
+ assert.equal(JSON.stringify(C.calcBerry(p,'60',100,opts)),JSON.stringify(C.calcBerry({...p,ribbon:stage},'60',100,{camp,evolution})));
+ assert.equal(JSON.stringify(p),snapshot);
+}
+const overrideChansey={...chansey,ribbon:0};
+assert.equal(C.calc(overrideChansey,'60',100,{evolution:'auto',ribbonOverride:4},'Egg').calculationSpecies,'CHANSEY');
+assert.equal(C.calc(overrideChansey,'60',100,{evolution:'auto',ribbonOverride:0},'Egg').calculationSpecies,'BLISSEY');
+for(const value of [undefined,null])assert.equal(JSON.stringify(C.calc(chansey,'60',100,{evolution:'auto',ribbonOverride:value},'Egg')),JSON.stringify(C.calc(chansey,'60',100,{evolution:'auto'},'Egg')));
+assert.equal(C.calc(overrideChansey,'60',100,{ribbonOverride:5}).ok,false);
+let collectionState=C.emptyState();const fast={...chansey,id:'faster',ribbon:4},slow={...chansey,id:'slower',nature:'ADAMANT',ribbon:0},unknown={...chansey,id:'unknown',nature:''};collectionState={...collectionState,mode:'60',evolution:'auto',ribbonOverride:4,pokemon:[slow,fast,unknown]};
+const saved=JSON.stringify(collectionState),rows=C.collectionCandidates('Egg',collectionState),valid=rows.filter(x=>x.r.ok);assert.equal(rows.length,3);assert(!rows[rows.length-1].r.ok);for(let i=1;i<valid.length;i++)assert(valid[i-1].r.counts.Egg>=valid[i].r.counts.Egg);for(const row of valid)assert.equal(JSON.stringify(row.r),JSON.stringify(C.assignmentResult('ingredient',row.p,'Egg',collectionState)));assert.equal(JSON.stringify(collectionState),saved);
+console.log('PASS independent ribbon/current-final-auto equivalence, Chansey reversal, legacy defaults, immutable individuals, complete read-only candidate list and precise order');

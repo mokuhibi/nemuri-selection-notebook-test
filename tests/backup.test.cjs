@@ -30,3 +30,13 @@ for(const target of D.ingredients.map(x=>x.id))assert.deepEqual(copy(C.assignmen
 for(const target of D.berries.map(x=>x.id))assert.deepEqual(copy(C.assignmentCandidates('berry',target,round)),copy(C.assignmentCandidates('berry',target,state)));
 const workflow=fs.readFileSync(path.join(__dirname,'../.github/workflows/pages.yml'),'utf8');assert(workflow.includes('app.js backup.js'));assert(workflow.includes('tests/backup.test.cjs'));
 console.log('PASS CSV exact round trip, all state/history/settings/IDs, same species, Japanese/emoji/quotes/commas/newlines/null/empty, legacy JSON, malformed input, and unchanged calculations/rankings');
+
+for(const ribbonOverride of [null,0,1,2,3,4]){
+ const bundle={...SleepCore.emptyState(),ribbonOverride};
+ const restored=SleepCore.validateState(SleepBackup.decode(SleepBackup.encode(bundle)));
+ assert.equal(restored.ribbonOverride,ribbonOverride);
+ assert.equal(SleepCore.validateState(JSON.parse(JSON.stringify(bundle))).ribbonOverride,ribbonOverride);
+}
+assert.equal(SleepCore.validateState(SleepCore.emptyState()).ribbonOverride,undefined);
+for(const ribbonOverride of [-1,5,'4',false])assert.throws(()=>SleepCore.validateState({...SleepCore.emptyState(),ribbonOverride}));
+console.log('PASS optional ribbon override in CSV/JSON with unchanged schema and legacy missing-field behavior');

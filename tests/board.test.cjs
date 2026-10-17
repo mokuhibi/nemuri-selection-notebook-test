@@ -39,7 +39,7 @@ const fullSkills=B.skills(p,'current'),unknownSkills=B.skills({...p,subskills:['
 assert.deepEqual(skillOrder(fullSkills),skillOrder(unknownSkills));assert.equal(skillOrder(fullSkills).length,5);
 assert(fullSkills.includes('rarity-gold owned locked'));assert(fullSkills.includes('rarity-silver owned active'));assert(fullSkills.includes('rarity-white owned active'));
 assert(fullSkills.includes('未所持'));assert(!unknownSkills.includes('未所持'));assert(unknownSkills.includes('未確認'));
-assert(B.skills(p,'70').includes('rarity-gold owned projected'));assert(B.nature({...p,nature:'BASHFUL'},true).includes('class="mini-nature"'));
+assert(B.skills(p,'70').includes('data-unlock-status="projected"'));assert(B.nature({...p,nature:'BASHFUL'},true).includes('class="mini-nature"'));
 const pre={...p,species:'CHARMANDER',nickname:'そのまま',slots:['Sausage','Ginger','Herb']},preBefore=JSON.stringify(pre);
 assert.equal(B.displaySpecies(pre,{evolution:'current'}),'ヒトカゲ');assert.equal(B.displaySpecies(pre,{evolution:'final',finalForms:{}}),'リザードン');
 const evolved=B.identity(pre,{mode:'70',evolution:'final',finalForms:{}});assert(evolved.includes('リザードン'));assert(evolved.includes('そのまま'));assert.equal(JSON.stringify(pre),preBefore);
@@ -95,7 +95,7 @@ assert.equal(B.ingredientCountText(42.8),'42');assert.equal(B.ingredientCountTex
 let pair;for(let level=1;level<69;level++){const a={...p,id:'higher',level:level+1},b={...p,id:'lower',level};const av=C.calc(a,'current',100).counts.Sausage,bv=C.calc(b,'current',100).counts.Sausage;if(av>bv&&Math.floor(av)===Math.floor(bv)){pair={a,b,av,bv};break;}}assert(pair,'fixture with same integer display and distinct raw production');const rank=C.emptyState();rank.pokemon=[pair.b,pair.a];assert.equal(C.autoAssign(rank).assignments.Sausage.pokemonId,'higher');assert.equal(B.daily(pair.a,'current',100).items.find(([id])=>id==='Sausage')[1],pair.av);console.log('PASS floor-only ingredient text, same displayed integers retain precise ranking and calculation');
 
 // Projected badges use the shared dashed state, with no visible marker.
-for(const purpose of ['ingredient','berry']){const html=B.skills({...p,level:25,subskills:['INGREDIENT_FINDER_S','INVENTORY_S','HELPING_SPEED_M','HELPING_BONUS','INVENTORY_L']},'60',purpose);assert(html.includes('owned projected'));assert(!html.includes('<sup>試</sup>'));}
+for(const purpose of ['ingredient','berry']){const html=B.skills({...p,level:25,subskills:['INGREDIENT_FINDER_S','INVENTORY_S','HELPING_SPEED_M','HELPING_BONUS','INVENTORY_L']},'60',purpose);assert(html.includes('data-unlock-status="projected"'));assert(!html.includes('<sup>試</sup>'));}
 for(const [raw,text] of [[42.8,'42'],[18.2,'18'],[100.9,'100'],[0.9,'0'],[-0.2,'-1']])assert.equal(B.ingredientCountText(raw),text);
 const appSource=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8');
 for(const expression of ['x.quantity','x.diff','r.counts[ing.id]','a.counts[id]','r.counts[i.id]']){assert(appSource.includes('BoardView.ingredientCountText('+expression+')'));assert(!appSource.includes('num('+expression+')'));}
@@ -105,7 +105,7 @@ console.log('PASS projected marker removed and ingredient integer display shared
 assert.equal((B.composition({...p,slots:['Sausage','Sausage','Herb']},'60','Sausage').match(/composition-target/g)||[]).length,2);
 assert.equal((B.composition({...p,slots:['Sausage','Sausage','Herb']},'60','Herb').match(/composition-target/g)||[]).length,1);
 for(const ribbon of [null,0])assert(!B.identity({...p,ribbon},s,'ingredient',null,true).includes('sleep-ribbon'));
-const ribbonCard=B.identity({...p,ribbon:4},s,'ingredient',null,true);assert(ribbonCard.includes('🎗2,000'));assert(ribbonCard.indexOf('card-level')<ribbonCard.indexOf('sleep-ribbon'));assert(!ribbonCard.includes('compact-secondary'));
+const ribbonCard=B.identity({...p,ribbon:4},s,'ingredient',null,true);assert(ribbonCard.includes('<svg')&&ribbonCard.includes('2,000')&&!ribbonCard.includes('🎗'));assert(ribbonCard.indexOf('card-level')<ribbonCard.indexOf('sleep-ribbon'));assert(!ribbonCard.includes('compact-secondary'));
 assert(!compact.includes('empty-owner'));assert.equal((compact.match(/ingredient-watermark/g)||[]).length,19);assert(!B.skills(p,'60').includes('INVENTORY_'));assert(B.skills(p,'60').includes('スピM'));
 console.log('PASS note cards: actual target composition, Lv ribbon, no nickname supplements, inventory retained in individual skills, all empty headings retained');
 
@@ -122,3 +122,9 @@ assert(compact.indexOf('food-card-head')<compact.indexOf('food-card-title'));
 assert(compact.indexOf('food-card-title')<compact.indexOf('food-production-row'));
 assert(compact.indexOf('food-production-row')<compact.indexOf('assignment-identity'));
 console.log('PASS shared food heading: 19 wrappers, one target metric per card, name/composition before unchanged identity');
+
+assert.equal(B.skillDisplayStatus({...p,level:30},50,'60'),'active');
+assert.equal(C.slotStatus({...p,level:30},50,'60'),'projected');
+assert(!B.skills({...p,level:30},'60').includes('owned projected'));
+assert(B.miniSlots(p,'current',true,true).includes('ingredient-mini-icon'));
+console.log('PASS projected skills use active presentation without changing unlock state; registered food slots reuse SVG icons');
