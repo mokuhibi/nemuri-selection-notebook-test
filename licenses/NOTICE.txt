@@ -12,3 +12,11 @@ PokéAPI base Japanese species names: Copyright (c) 2013–2023 Paul Hallett
 and PokéAPI contributors. See PokeAPI-BSD-3-Clause.txt and DATA_SOURCES.md.
 Pokémon and Pokémon character names are trademarks of Nintendo.
 Game PNG images are no longer distributed in the current application.
+
+Ingredient icons (separate MIT-licensed artwork)
+Copyright (c) 2024 ちゃんりわ (17 icons)
+Copyright (c) 2025 ちゃんりわ (Pumpkin and Avocado)
+Distributed by https://github.com/nitoyon/pokesleep-tool
+Commit 11ebec8de7b7803e5d095e4f32ee29f6bc7db2fb
+React/MUI geometry extracted to SVG; JSX attributes converted to SVG attributes.
+See nitoyon-ingredient-icons-MIT.txt for full MIT notices and assets/ingredients/SOURCE.md for the file mapping.

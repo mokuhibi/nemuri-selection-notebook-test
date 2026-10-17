@@ -30,7 +30,7 @@ body.share-sheet{width:720px;max-width:none;margin:0;padding:12px;background:#ff
 .share-sheet .compact-secondary.no-nickname{display:none}
 
 .share-sheet .preview-composition{font-size:22px;gap:2px}
-.share-sheet .composition-design>.ingredient-watermark{font-size:115px;right:1px;top:28px;opacity:.12}
+.share-sheet .composition-design>.ingredient-watermark{width:115px;height:115px;object-fit:contain;right:1px;top:28px;opacity:.12}
 
 .share-sheet .harvest-tile.heading-center,.share-sheet .harvest-tile.heading-left{min-height:151px;padding-top:0;gap:3px}
 .share-sheet .food-card-title.food-divider{min-height:20px;margin-bottom:0;gap:5px}

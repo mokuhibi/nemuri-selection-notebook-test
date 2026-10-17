@@ -128,3 +128,12 @@ LICENSE.md：BSD-3-Clause。licenses/PokeAPI-BSD-3-Clause.txtに原文を同梱�
 6. 公開Git履歴に残る旧画像の扱い。現行削除は全履歴削除ではない。
 
 確認できない値を補完しない。計算バグが別途見つかった場合は、本整理の修正に混ぜず報告する。
+
+## 食材背景アイコン（2026-10-17導入）
+
+- 使用：`assets/ingredients/*.svg`、`board.js` の食材ID対応。通常カード・共有画像の背景のみ、不透明度12%。きのみと既存の食材絵文字は変更しない。
+- 作者：ちゃんりわ。配布元：https://github.com/nitoyon/pokesleep-tool
+- 固定版：`11ebec8de7b7803e5d095e4f32ee29f6bc7db2fb`、更新2026-10-17T08:41:12Z、取得・確認2026-10-17。上流 `src/ui/Resources/*Icon.tsx` の19種類。
+- MIT。Copyright (c) 2024 ちゃんりわ（17種）、Copyright (c) 2025 ちゃんりわ（Pumpkin / Avocado）。著作権表示・許諾文・無保証条項を全SVGと `licenses/nitoyon-ingredient-icons-MIT.txt` に保持。商用利用・改変・再配布を許可するMITの条件に従う。NeroliのApache-2.0とは別扱い。
+- 変更：SVG図形をReact/MUIから抽出、JSX属性をSVG属性へ変換。色・図形・viewBoxは保持。ID対応・各ファイル・変換後ハッシュは `assets/ingredients/SOURCE.md`。
+- 設定からライセンス全文を参照でき、食材共有画像にも作者・MIT・取得元を表示する。性能値・計算・保存形式の変更なし。

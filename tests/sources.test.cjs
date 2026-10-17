@@ -17,3 +17,21 @@ assert(read('licenses/NOTICE.txt').startsWith("Neroli's Lab\nCopyright The Nerol
 assert(read('licenses/PokeAPI-BSD-3-Clause.txt').includes('Redistribution and use'));
 for(const id of ['FOONGUS','AMOONGUSS']){const sp=SleepCore.species(id);assert.equal(sp.sourceId,'raenonx-20261005');assert.equal(sp.carry,null);}
 console.log('PASS source registry/credits published, unused game images excluded, image-free cards, separate source identities and unknown carry retained');
+
+// Approved ingredient artwork is separate from removed Pokemon/berry images.
+const svgNames=fs.readdirSync(path.join(root,'assets/ingredients')).filter(f=>f.endsWith('.svg'));
+assert.deepEqual(svgNames.sort(),SleepData.ingredients.map(i=>i.id+'.svg').sort());
+const iconState=SleepCore.emptyState(),iconHTML=BoardView.render({state:iconState});
+for(const ingredient of SleepData.ingredients){
+ const svg=read('assets/ingredients/'+ingredient.id+'.svg');
+ assert(svg.includes('MIT License'));assert(svg.includes('Copyright (c) '+(['Pumpkin','Avocado'].includes(ingredient.id)?'2025':'2024')+' ちゃんりわ'));
+ assert(svg.includes('Permission is hereby granted'));assert(svg.includes('THE SOFTWARE IS PROVIDED'));
+ assert(svg.includes('11ebec8de7b7803e5d095e4f32ee29f6bc7db2fb'));assert(svg.includes('viewBox="0 0 200 200"'));
+ assert(!/<image|<script|href=/.test(svg));
+ assert(iconHTML.includes('src="assets/ingredients/'+ingredient.id+'.svg"'));
+}
+assert(iconHTML.includes('aria-hidden="true"'));
+assert(read('app.js').includes('img.decode()'));assert(read('app.js').includes('食材アイコン © 2024 / 2025 ちゃんりわ'));
+assert(read('app.js').includes('href="licenses/nitoyon-ingredient-icons-MIT.txt"'));
+assert(read('licenses/NOTICE.txt').includes('separate MIT-licensed artwork'));
+console.log('PASS all 19 ID-keyed licensed SVG watermarks, authors/years, fixed source, no external image dependency, share decode and settings credit');
