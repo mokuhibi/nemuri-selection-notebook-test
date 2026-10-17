@@ -87,3 +87,8 @@ body.share-sheet{width:576px;padding:8px}
 .share-sheet .harvest-tile .food-card-head .food-divider::after{flex-basis:4px;min-width:4px}
 .share-sheet .harvest-tile .food-card-head .food-title-text{line-height:1.25;text-wrap:balance}
 .share-sheet .harvest-tile .food-card-head .target-yield b,.share-sheet .harvest-tile .food-card-head .empty-food-count{font-size:29px}
+
+/* Four-column output remains compact; no food-head or SVG rules are changed. */
+.share-sheet.journal-design .harvest-tile .assignment-identity{grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:minmax(23px,auto) 23px;min-height:47px;gap:1px 3px}
+.share-sheet.journal-design .harvest-tile .assignment-identity>.mini-nature{width:auto;min-width:36px;max-width:82px;min-height:22px;padding:1px 3px;gap:3px}
+.share-sheet.journal-design .harvest-tile .mini-nature :is(.up,.down){font-size:9px}.share-sheet.journal-design .assignment-identity>.sleep-ribbon{font-size:9px;gap:1px}.share-sheet.journal-design .assignment-identity>.sleep-ribbon svg{width:8px;height:11px}
