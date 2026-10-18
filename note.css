@@ -189,7 +189,7 @@ main{width:100%;margin-left:auto;margin-right:auto}
 .food-collection-group .candidate-row{cursor:default}.food-collection-group .candidate-meta .preview-composition{font-size:16px}.food-collection-group .candidate-daily{margin-left:auto}
 @media(max-width:430px){.streamlined-ui .simulation-settings .simulation-group{display:grid;grid-template-columns:1fr}.streamlined-ui .compact-camp-conditions{justify-self:end}.streamlined-ui .compact-options .filter-chips{gap:2px}.streamlined-ui .compact-options .filter-chips button{padding-left:3px;padding-right:3px}.streamlined-ui .compact-level-evolution{gap:4px}.ribbon-control{gap:3px}}
 
-/* Approved restored layout; retain the measured header height and the content below. */
+/* Restored ingredient header arrangement; identity tracks follow below. */
 .harvest-tile .restored-food-head{display:flex;flex-direction:column;justify-content:space-between;flex:none;min-width:0;width:100%;gap:0}
 .harvest-tile .restored-food-head>.food-card-title,.harvest-tile .restored-food-head>.food-production-row{flex:none;width:100%}
 
@@ -210,10 +210,44 @@ body.journal-design{--ink:#202124;--muted:#777c80;--line:#ecedee;--soft:#f5f6f6;
 .journal-design .tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;background:#fffffff5;border-top:1px solid #ecedee;box-shadow:none;padding:6px 10px calc(10px + env(safe-area-inset-bottom));max-width:840px;backdrop-filter:blur(16px)}
 .journal-design .tabs .tab{font-size:12px;line-height:1.4;font-weight:400;color:#8b9094;min-height:52px;padding:6px 0;white-space:nowrap;border:0;border-radius:0;background:none}
 .journal-design .tabs .tab.active{font-weight:650;color:#202124}.journal-design .tabs .tab.active::before{width:16px;left:calc(50% - 8px);height:2px;background:#222}
-/* Same name/ribbon and Lv/nature coordinates in both card kinds. */
-.journal-design .harvest-tile .assignment-identity{display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:minmax(24px,auto) 26px;gap:1px 4px;min-height:51px;align-items:center}
-.journal-design .harvest-tile .assignment-identity>.mini-person{grid-column:1;grid-row:1;min-width:0;min-height:24px;align-self:center;white-space:normal;overflow-wrap:anywhere}
-.journal-design .harvest-tile .assignment-identity>.sleep-ribbon{grid-column:2;grid-row:1;justify-self:end;align-self:center;flex:none;white-space:nowrap}
-.journal-design .harvest-tile .assignment-identity>.level-ribbon{grid-column:1;grid-row:2;min-width:0;justify-self:start}
-.journal-design .harvest-tile .assignment-identity>.mini-nature{grid-column:2;grid-row:2;justify-self:end;width:auto;min-width:43px;max-width:90px;min-height:25px;padding:2px 4px;display:flex;flex-wrap:nowrap;gap:5px}
+/* Fixed tracks: name/form, then Lv + ribbon opposite nature. */
+.journal-design .harvest-tile :is(.restored-food-head,.berry-card-head){display:flex;flex-direction:column;justify-content:space-between;height:54px;min-height:54px;flex:none;gap:0;min-width:0;width:100%}
+.journal-design .harvest-tile .assignment-identity{display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:36px 28px;gap:2px;min-height:66px;align-items:center}
+.journal-design .harvest-tile .assignment-identity>.mini-person{grid-column:1/-1;grid-row:1;min-width:0;height:36px;min-height:36px;padding:0;margin:0;align-self:stretch;overflow:visible}
+.journal-design .harvest-tile .assignment-identity .mini-person-name{display:grid;grid-template-rows:20px 14px;gap:2px;height:36px;min-width:0;line-height:20px;white-space:normal;overflow:visible;letter-spacing:0}
+.journal-design .species-name-main{display:block;min-width:0;font-size:15px;font-weight:700;line-height:20px;white-space:nowrap;overflow-wrap:normal}
+.journal-design .species-name-form{display:block;min-width:0;font-size:10px;font-weight:400;line-height:14px;color:#777c80;letter-spacing:0;white-space:nowrap}
+.journal-design .harvest-tile .assignment-identity>.level-ribbon{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:flex-start;gap:3px;min-width:0;white-space:nowrap}
+.journal-design .level-ribbon .card-level{flex:none;font-size:11px}.journal-design .level-ribbon .sleep-ribbon{flex:none;font-size:10px;gap:1px}.journal-design .level-ribbon .sleep-ribbon svg{width:8px;height:11px}
+.journal-design .harvest-tile .assignment-identity>.mini-nature{grid-column:2;grid-row:2;justify-self:end;display:flex;flex-wrap:nowrap;gap:3px;width:max-content;min-width:40px;max-width:none;min-height:26px;padding:2px 3px}
 .journal-design .harvest-tile .mini-nature :is(.up,.down){color:#202124;white-space:nowrap;font-size:11px}.journal-design .mini-nature .up>.nature-symbol{color:#b34a45}.journal-design .mini-nature .down>.nature-symbol{color:#346da6}
+/* Visible everyday settings; compact two-row controls with 44px tap targets. */
+.journal-design.streamlined-ui .site-header{margin:18px auto 14px;padding-bottom:14px}
+.journal-design .section-top,.journal-design.streamlined-ui #view-board .assignment-header>.section-top{align-items:center;margin:0 0 8px;min-height:44px}
+.journal-design .section-top h2,.journal-design.streamlined-ui .assignment-header h2,.journal-design #view-cooking>.section-top h2,.journal-design #view-maps>.section-top h2{font-size:26px;line-height:1.3}
+.journal-design.streamlined-ui #share-open{min-height:44px;min-width:44px;padding:6px 10px;font-size:12px}
+.journal-design.streamlined-ui .simulation-settings .simulation-group{display:grid;grid-template-columns:minmax(0,1fr);gap:0;min-width:0}
+.journal-design.streamlined-ui .compact-level-evolution{display:grid;grid-template-columns:72px minmax(70px,1fr) minmax(104px,1.25fr);gap:5px;min-width:0;width:100%}
+.journal-design.streamlined-ui .simulation-settings #evolution-mode{width:100%}
+.journal-design .ribbon-control{display:flex;font-size:10px;gap:3px;min-width:0}
+.journal-design.streamlined-ui .simulation-settings #ribbon-mode{flex:1;width:0;min-width:0;padding:6px 2px}
+.journal-design.streamlined-ui .compact-camp-conditions{width:100%;margin:0;justify-content:space-between;gap:8px;min-height:44px}
+.journal-design.streamlined-ui .simulation-settings .condition-button{width:52px;min-width:52px;color:#777c80}
+.journal-design.streamlined-ui .compact-options{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:0 4px;min-height:44px}
+.journal-design.streamlined-ui .compact-options .filter-chips{min-width:0;gap:0;grid-column:1;grid-row:1}
+.journal-design.streamlined-ui .compact-options .filter-chips button{min-width:44px;padding:6px 2px;flex:1}
+.journal-design .sort-control{position:relative;grid-column:2;grid-row:1;width:92px;height:44px;min-width:0}
+.journal-design.streamlined-ui .sort-control>.compact-sort{position:absolute;right:0;top:0;margin:0;width:118px;max-width:none;min-height:58px;height:58px;padding:6px 2px;font-size:16px;transform:scale(.76);transform-origin:right top;border:0;background:none}
+.journal-design.streamlined-ui .compact-options:has(.type-filter){grid-template-columns:minmax(132px,1fr) minmax(0,70px) 92px;gap:0 3px}
+.journal-design.streamlined-ui .compact-options:has(.type-filter) .sort-control{grid-column:3}
+.journal-design.streamlined-ui .compact-options .type-filter{grid-column:2;grid-row:1;min-width:0;max-width:100%;width:100%}
+@media(max-width:359px){
+ .journal-design main{padding-left:14px;padding-right:14px}.journal-design.streamlined-ui .site-header{width:calc(100% - 28px)}
+ .journal-design .harvest-grid{column-gap:12px}
+ .journal-design .level-ribbon .card-level{font-size:10px}.journal-design .level-ribbon .sleep-ribbon{font-size:9px}.journal-design .harvest-tile .mini-nature :is(.up,.down){font-size:10px}
+ .journal-design.streamlined-ui .compact-options:has(.type-filter){grid-template-columns:minmax(0,1fr) 92px;gap:0 4px}
+ .journal-design.streamlined-ui .compact-options:has(.type-filter) .sort-control{grid-column:2}
+ .journal-design.streamlined-ui .compact-options .type-filter{grid-column:1/-1;grid-row:2;width:100%;max-width:none}
+ .journal-design.streamlined-ui .compact-options .type-filter>summary{width:max-content;max-width:100%}
+ .journal-design .harvest-tile .berry-yield .berry-type{font-size:9px;padding:2px 3px}
+}

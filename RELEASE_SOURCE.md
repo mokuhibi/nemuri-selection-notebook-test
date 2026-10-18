@@ -1,19 +1,19 @@
 # テスト版の採用元
 
-Development commit: `18585bd850da57579f5bdb5c27feebc3f1da6166`
+Development commit: `26debdf642415c43754c42d10c7feaf6647909a7`
 
 Environment split established: 2026-10-17. Publication requires explicit user approval.
 Runtime changes from the approved source: environment identifier and PWA test name only.
 
 ## Unchanged runtime SHA-256
 
-- `app.js` 60c32f2b4cf772e6472febd4527a7e561e3fd266ca96b99e6cfa80c835d3cb9b
+- `app.js` 5e200bd3a84563504d0cf0f099a894a964c27b9105e68991a60d6aab75735a87
 - `backup.js` 2c031ac1717ae689cb585d4e25ca5e92487757656dffca34f4df45062f1e6be1
 - `core.js` 12eb1a88836f447d532d0a5bbe7a482b07268a4de31d3bf9986cd1d99eaa7890
 - `data.js` a5f7e54333db778dbfd358e9d8374ea5f05557d3e76a0dc1b24ba32928dd7bb7
-- `board.js` ffb99da371e31eb6c48e1abd82b54355f7522fb5efbf96f5f98d3b1e10807f69
-- `berries.js` 283455457665061758b10ca8c42e7f402ff6d34d8680339d9ea3899dd1322a02
-- `index.html` 328367ee02329020957cebbe220bf2eff322276c554060b1b72d88e1fa84133a
+- `board.js` ce5d9f86ed91b0729250ff567119d346cf5f6b074dd9610946ef68b6c0cbc43d
+- `berries.js` 34ca53c91212bb6e082c99f9dca6c7d6955dd2b057b164485ffd0f25502e9c44
+- `index.html` 2ffd5a4837a96e001edbe34d7c0e878cf85e01571d1ae31f291773961c2947bd
 - `style.css` e009a938a4dba9604e1db73ee1f9860416c43563378752a025dd2833633f5884
-- `note.css` 2f1caecdeb49684090528c64c019dac5ad8631d499dbf9b08fe494b962c03cbb
-- `share.css` e68ee9e4b6c146d71a18ee018a5764f11ed8021262050e33713ea2e082a79136
+- `note.css` 60ef8cb183d4829a40ec4b99983ce3133642b4dfced9f4f675656633d473ef21
+- `share.css` 2c8fdba1159a5077e7d2cd369512d48cf60bbc3e1b02e09eef320e2fb3fce7f4

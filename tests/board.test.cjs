@@ -128,3 +128,21 @@ assert.equal(C.slotStatus({...p,level:30},50,'60'),'projected');
 assert(!B.skills({...p,level:30},'60').includes('owned projected'));
 assert(B.miniSlots(p,'current',true,true).includes('ingredient-mini-icon'));
 console.log('PASS projected skills use active presentation without changing unlock state; registered food slots reuse SVG icons');
+
+// Form identity stays visible in its own track; display-only aliases never alter records.
+const formsBefore=JSON.stringify(D.pokemon);
+for(const sp of D.pokemon){
+ const html=B.cardNameHTML(sp.name),text=html.replace(/<[^>]*>/g,'');
+ assert.equal(text,sp.name,'preserve the complete master name for '+sp.id);
+ assert(html.includes('species-name-main')&&html.includes('species-name-form'));
+}
+for(const [id,size] of [['GOURGEIST_SMALL','こだま'],['GOURGEIST_MEDIUM','ちゅうだま'],['GOURGEIST_LARGE','おおだま'],['GOURGEIST_JUMBO','ギガだま']]){
+ assert.equal(B.cardNameHTML(C.species(id).name,true).replace(/<[^>]*>/g,''),'パンプジン'+size);
+}
+assert(B.cardNameHTML('<script>').includes('&lt;script&gt;'));
+const assignedIdentity=B.identity({...p,ribbon:4,nature:'MODEST'},s,'ingredient',null,true);
+assert(assignedIdentity.indexOf('species-name-form')<assignedIdentity.indexOf('level-ribbon'));
+assert(assignedIdentity.indexOf('level-ribbon')<assignedIdentity.indexOf('sleep-ribbon'));
+assert(assignedIdentity.includes('スピ<span class="nature-symbol">▼'));
+assert.equal(JSON.stringify(D.pokemon),formsBefore);
+console.log('PASS every master form/event preserved, share-only size aliases, independent name and Lv/ribbon tracks, immutable master data');

@@ -7,7 +7,13 @@ const short={INGREDIENT_FINDER_S:'食S',INGREDIENT_FINDER_M:'食M',HELPING_SPEED
 const statusName={active:'解放済み',projected:'試算で解放',locked:'未解放'};
 const skillDisplayStatus=(p,threshold,mode)=>C.slotStatus(p,threshold,mode)==='projected'?'active':C.slotStatus(p,threshold,mode);
 const displaySpecies=(p,state={},result=null)=>result?.ok?C.species(result.calculationSpecies)?.name||'未確認':!C.species(p.species)?(p.customName||'未入力'):state.evolution==='final'?(C.simulatedSpecies(p,state)?.name||'進化先未選択'):C.species(p.species).name;
-function identity(p,state,purpose='ingredient',result=null,assignment=false){if(assignment)return `<div class="compact-row compact-identity assignment-identity"><button class="mini-person" data-detail="${esc(p.id)}" title="${esc(displaySpecies(p,state,result))}・詳細を開く"><span class="mini-person-name">${esc(displaySpecies(p,state,result))}</span></button><span class="level-ribbon"><span class="card-level" title="現在Lv.${p.level}・計算Lv.${C.effectiveLevel(p,state.mode)}">Lv.${C.effectiveLevel(p,state.mode)}</span></span>${nature(p,true,purpose,'スピ')}${Number.isInteger(C.effectiveRibbon(p,state))&&C.effectiveRibbon(p,state)>0?sleepRibbon({...p,ribbon:C.effectiveRibbon(p,state)}):''}</div>`;return `<div class="compact-row compact-identity"><button class="mini-person" data-detail="${esc(p.id)}" title="${esc(displaySpecies(p,state,result))}・現在Lv.${p.level}・計算Lv.${C.effectiveLevel(p,state.mode)}・詳細を開く"><span class="mini-person-name">${esc(displaySpecies(p,state,result))}</span></button><span class="card-level" title="現在Lv.${p.level}・計算Lv.${C.effectiveLevel(p,state.mode)}">Lv.${C.effectiveLevel(p,state.mode)}</span>${nature(p,true,purpose)}</div><div class="compact-row compact-secondary"><span class="card-nickname" title="${esc(p.nickname)}">${esc(p.nickname)}</span></div>`;}
+const gourgeistSizes=Object.freeze({GOURGEIST_SMALL:'こだま',GOURGEIST_MEDIUM:'ちゅうだま',GOURGEIST_LARGE:'おおだま',GOURGEIST_JUMBO:'ギガだま'});
+function cardNameHTML(name,share=false){
+ const sp=D.pokemon.find(p=>p.name===name),parts=sp&&/^(.+?)（(.+)）$/.exec(sp.name);
+ const main=parts?parts[1]:name,form=parts?(share&&gourgeistSizes[sp.id]?gourgeistSizes[sp.id]:`（${parts[2]}）`):'';
+ return `<span class="species-name-main">${esc(main)}</span><small class="species-name-form">${esc(form)}</small>`;
+}
+function identity(p,state,purpose='ingredient',result=null,assignment=false){if(assignment)return `<div class="compact-row compact-identity assignment-identity"><button class="mini-person" data-detail="${esc(p.id)}" title="${esc(displaySpecies(p,state,result))}・詳細を開く"><span class="mini-person-name">${cardNameHTML(displaySpecies(p,state,result))}</span></button><span class="level-ribbon"><span class="card-level" title="現在Lv.${p.level}・計算Lv.${C.effectiveLevel(p,state.mode)}">Lv.${C.effectiveLevel(p,state.mode)}</span>${Number.isInteger(C.effectiveRibbon(p,state))&&C.effectiveRibbon(p,state)>0?sleepRibbon({...p,ribbon:C.effectiveRibbon(p,state)}):''}</span>${nature(p,true,purpose,'スピ')}</div>`;return `<div class="compact-row compact-identity"><button class="mini-person" data-detail="${esc(p.id)}" title="${esc(displaySpecies(p,state,result))}・現在Lv.${p.level}・計算Lv.${C.effectiveLevel(p,state.mode)}・詳細を開く"><span class="mini-person-name">${esc(displaySpecies(p,state,result))}</span></button><span class="card-level" title="現在Lv.${p.level}・計算Lv.${C.effectiveLevel(p,state.mode)}">Lv.${C.effectiveLevel(p,state.mode)}</span>${nature(p,true,purpose)}</div><div class="compact-row compact-secondary"><span class="card-nickname" title="${esc(p.nickname)}">${esc(p.nickname)}</span></div>`;}
 // ID-keyed licensed ingredient artwork shared by cards and registered food slots.
 const ingredientIcons=Object.freeze({"Apple":"assets/ingredients/Apple.svg","Milk":"assets/ingredients/Milk.svg","Soybean":"assets/ingredients/Soybean.svg","Honey":"assets/ingredients/Honey.svg","Sausage":"assets/ingredients/Sausage.svg","Ginger":"assets/ingredients/Ginger.svg","Tomato":"assets/ingredients/Tomato.svg","Egg":"assets/ingredients/Egg.svg","Oil":"assets/ingredients/Oil.svg","Potato":"assets/ingredients/Potato.svg","Herb":"assets/ingredients/Herb.svg","Corn":"assets/ingredients/Corn.svg","Cacao":"assets/ingredients/Cacao.svg","Coffee":"assets/ingredients/Coffee.svg","Avocado":"assets/ingredients/Avocado.svg?v=20261017-grouped","Mushroom":"assets/ingredients/Mushroom.svg","Leek":"assets/ingredients/Leek.svg","Pumpkin":"assets/ingredients/Pumpkin.svg?v=20261017-grouped","Tail":"assets/ingredients/Tail.svg"});
 function ingredientWatermark(id){const src=ingredientIcons[id];return src?`<img class="ingredient-watermark" src="${src}" alt="" aria-hidden="true" width="110" height="110">`:'';}
@@ -43,17 +49,13 @@ function render({state,list=D.ingredients,sort='default',items=null}){
  const owner=id=>state.pokemon.find(p=>p.id===state.assignments[id]?.pokemonId);
  return (items||orderedIngredients(sort)).map(ing=>{const p=owner(ing.id),match=list.some(i=>i.id===ing.id),result=p?C.assignmentResult('ingredient',p,ing.id,state):null;return `<article class="harvest-tile composition-design heading-left ${p?'assigned':'unassigned'} ${match?'':'search-muted'}" aria-label="${esc(ing.name)}の担当">${ingredientWatermark(ing.id)}<div class="food-card-head"><h3 class="food-card-title food-divider">${p?`<span class="food-title-text" title="${esc(ing.name)}">${esc(ing.name)}</span>`:`<button class="food-title-text empty-ingredient" data-assign="${ing.id}" aria-label="${esc(ing.name)}の担当を登録">${esc(ing.name)}</button>`}</h3>${p?`<div class="compact-top food-production-row">${composition(p,state.mode,ing.id)}${dailyHTML(p,state,ing.id,result)}</div></div>${identity(p,state,'ingredient',result,true)}${skills(p,state.mode)}`:`<div class="compact-top food-production-row empty-food-top"><span>―</span><button class="target-yield" data-assign="${ing.id}" aria-label="${esc(ing.name)}の担当を選ぶ"><b class="empty-food-count">―</b></button></div></div>`}</article>`;}).join('');
 }
-// Match the approved preview: change only the header layout, retaining its
-// original responsive height so names, ribbon, skills and SVG stay in place.
+// A common header track prevents long target labels from moving identity rows.
 function layoutFoodHeaders(container){
- const heads=[...container.querySelectorAll('.food-card-head,.restored-food-head')].filter(head=>head.getBoundingClientRect().width>0);
- for(const head of heads){head.classList.replace('restored-food-head','food-card-head');head.style.removeProperty('height');}
- const heights=heads.map(head=>head.getBoundingClientRect().height);
- heads.forEach((head,i)=>{head.classList.replace('food-card-head','restored-food-head');head.style.height=heights[i]+'px';});
+ for(const head of container.querySelectorAll('.food-card-head,.restored-food-head')){head.classList.replace('food-card-head','restored-food-head');head.style.removeProperty('height');}
 }
 // Share-only aliases: resolve the already simulated display name to its master ID.
 function shareNameHTML(name){
- const sizes={GOURGEIST_SMALL:'こだま',GOURGEIST_MEDIUM:'ちゅうだま',GOURGEIST_LARGE:'おおだま',GOURGEIST_JUMBO:'ギガだま'},sp=D.pokemon.find(p=>p.name===name),size=sp&&sizes[sp.id];
+ const sizes=gourgeistSizes,sp=D.pokemon.find(p=>p.name===name),size=sp&&sizes[sp.id];
  return size?`<span class="share-size-name" title="${esc(sp.name)}" aria-label="${esc(sp.name)}">パンプジン<span class="share-pokemon-size">${size}</span></span>`:esc(name);
 }
 function targetList(kind,state,options={}){
@@ -64,5 +66,5 @@ function targetList(kind,state,options={}){
  const assigned=i=>state.pokemon.some(p=>p.id===assignments[i.id]?.pokemonId&&!C.assignmentResult(kind,p,i.id,state).excluded);
  return items.filter(i=>!options.filter||options.filter==='all'||options.filter==='assigned'&&assigned(i)||options.filter==='empty'&&!assigned(i));
 }
-root.BoardView={layoutFoodHeaders,skillDisplayStatus,shareNameHTML,composition,ingredientCountText,sleepRibbon,short,targetList,displaySpecies,identity,evaluationSkills,orderedIngredients,render,time,nature,skills,miniSlots,slotLetters,letterSlots,daily};
+root.BoardView={cardNameHTML,layoutFoodHeaders,skillDisplayStatus,shareNameHTML,composition,ingredientCountText,sleepRibbon,short,targetList,displaySpecies,identity,evaluationSkills,orderedIngredients,render,time,nature,skills,miniSlots,slotLetters,letterSlots,daily};
 })(globalThis);
