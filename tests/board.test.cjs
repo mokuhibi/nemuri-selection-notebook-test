@@ -146,3 +146,14 @@ assert(assignedIdentity.indexOf('level-ribbon')<assignedIdentity.indexOf('sleep-
 assert(assignedIdentity.includes('スピ<span class="nature-symbol">▼'));
 assert.equal(JSON.stringify(D.pokemon),formsBefore);
 console.log('PASS every master form/event preserved, share-only size aliases, independent name and Lv/ribbon tracks, immutable master data');
+
+const progressState={...s,ingredientCompletion:{Sausage:true,Apple:true}};
+const progressHTML=B.render({state:progressState,completion:true,completionInteractive:true});
+assert(progressHTML.includes('ingredient-complete'));
+assert(progressHTML.includes('data-ingredient-completion="Sausage" aria-label="マメミートの厳選完了" aria-pressed="true"'));
+assert(progressHTML.includes('data-ingredient-completion="Apple" aria-label="とくせんリンゴ" aria-disabled="true"'));
+const emptyApple=progressHTML.match(/<article[^>]*aria-label="とくせんリンゴの担当"/)[0];assert(!emptyApple.includes('ingredient-complete'));
+const sharedProgress=B.render({state:progressState,completion:true});
+assert(sharedProgress.includes('ingredient-complete'));assert(!sharedProgress.includes('data-ingredient-completion'));
+assert(!B.render({state:progressState}).includes('ingredient-complete'));
+console.log('PASS food-tab-only progress, empty card cannot toggle or show red, share reuses status without action or checkmark');

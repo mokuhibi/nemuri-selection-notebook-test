@@ -31,3 +31,19 @@ assert.equal((B.render({state:out,list:D.ingredients,layout:'compact'}).match(/<
 console.log('PASS automatic specialty ranking, same calculation/conditions, multiple ingredients, replacement, ties, unknowns, projected reversal, evolution berry change, camp, immutable data, manual history/backup, fixed role-specific skill states, all tiles');
 
 const deletionBefore=JSON.stringify(improved);const deleted=C.autoAssign(C.validateState(C.removePokemon(C.removePokemon(improved,'fast'),'berry-fast')));assert.equal(JSON.stringify(improved),deletionBefore);assert.equal(deleted.assignments.Sausage.pokemonId,'food');assert.equal(deleted.assignments.Sausage.complete,true);assert.equal(deleted.berryAssignments.GREPA.pokemonId,'berry');assert(!deleted.assignmentHistory.Sausage.fast);assert(!deleted.berryAssignmentHistory.GREPA.includes('berry-fast'));C.validateState(JSON.parse(JSON.stringify(deleted)));console.log('PASS deletion removes history/condition references, recomputes both owners and preserves surviving manual records');
+
+const completed={...out,ingredientCompletion:{Sausage:true,Ginger:false}};
+const production=C.assignmentResult('ingredient',food,'Sausage',out);
+const switched=C.autoAssign({...completed,pokemon:[...completed.pokemon,faster]});
+assert.equal(switched.assignments.Sausage.pokemonId,'fast');
+assert.equal(switched.ingredientCompletion.Sausage,true);assert.equal(switched.ingredientCompletion.Ginger,false);
+const gone=C.autoAssign(C.removePokemon(C.removePokemon(switched,'food'),'fast'));
+assert(!gone.assignments.Sausage);assert.equal(gone.ingredientCompletion.Sausage,true);
+const returned=C.autoAssign({...gone,pokemon:[...gone.pokemon,food]});
+assert.equal(returned.ingredientCompletion.Sausage,true);
+assert.equal(JSON.stringify(C.assignmentResult('ingredient',food,'Sausage',returned)),JSON.stringify(production));
+assert.equal(JSON.stringify(completed.pokemon),JSON.stringify(out.pokemon));
+const oldCompleted=JSON.parse(JSON.stringify(out));delete oldCompleted.ingredientCompletion;
+assert.equal(C.validateState(oldCompleted).ingredientCompletion.Sausage,true);
+assert.equal(C.validateState({...oldCompleted,ingredientCompletion:{Sausage:false}}).ingredientCompletion.Sausage,false);
+console.log('PASS ingredient progress survives owner changes, deletion, no owner, return and legacy migration with identical production');

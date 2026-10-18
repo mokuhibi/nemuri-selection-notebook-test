@@ -19,3 +19,14 @@ const swablu={...berry,id:'swablu',species:'SWABLU',slots:['Egg','Egg','Egg']};c
 assert(!C.assignmentResult('ingredient',food,'Sausage',{...s,typeFilters:['fire'],mode:'80'}).excluded,'missing calculation is not a type exclusion');
 const normal=C.assignmentResult('berry',berry,'GREPA',multi),map=C.calcMapBerry(berry,multi.mode,multi.energy,multi,'powerplant',[],'GREPA');assert.equal(map.berryEnergy,normal.berryEnergy*D.berryModifiers.favored);assert.equal(map.calculationSpecies,normal.calculationSpecies);assert.equal(C.assignmentResult('ingredient',food,'Sausage',multi).counts.Sausage,C.calc(food,multi.mode,multi.energy,multi,'Sausage').counts.Sausage);assert(!C.calcMapBerry(berry,outside.mode,outside.energy,outside,'powerplant',[],'GREPA').ok);
 console.log('PASS manual persistence/reset/delete/migration, candidate/type constraints, form-specific types, missing calculation handling, and shared map/cooking/card values');
+
+// Ingredient progress is independent of the assigned individual and legacy records.
+{
+ const progress=C.validateState({...C.emptyState(),ingredientCompletion:Object.fromEntries(D.ingredients.map((i,n)=>[i.id,n%2===0]))});
+ assert.deepEqual(C.autoAssign(progress).ingredientCompletion,progress.ingredientCompletion);
+ const wrong=[null,[],true,{Apple:'true'},{Unknown:true}];
+ for(const ingredientCompletion of wrong)assert.throws(()=>C.validateState({...C.emptyState(),ingredientCompletion}));
+ const legacy=C.emptyState();delete legacy.ingredientCompletion;
+ assert.equal(Object.keys(C.validateState(legacy).ingredientCompletion).length,0);
+}
+console.log('PASS all 19 ingredient progress flags survive automatic reassignment and reject invalid IDs/types');

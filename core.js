@@ -139,7 +139,7 @@ function compare(state,recipe){return recipe.ingredients.map(x=>{
  const quantity=result?.ok?result.counts[x.id]:null;
  return {...x,need:x.amount*3,pokemon:p,result,quantity,diff:quantity===null?null:quantity-x.amount*3};
 });}
-function emptyState(){return {schemaVersion:1,manualAssignments:{ingredient:{},berry:{}},typeFilters:[],mapDisplay:'berry',pokemon:[],assignments:{},berryAssignments:{},assignmentHistory:{},berryAssignmentHistory:{},mode:'current',energy:100,evolution:'current',camp:false,finalForms:{},recipeId:D.recipes[0].id,updatedAt:null};}
+function emptyState(){return {schemaVersion:1,manualAssignments:{ingredient:{},berry:{}},typeFilters:[],mapDisplay:'berry',pokemon:[],ingredientCompletion:{},assignments:{},berryAssignments:{},assignmentHistory:{},berryAssignmentHistory:{},mode:'current',energy:100,evolution:'current',camp:false,finalForms:{},recipeId:D.recipes[0].id,updatedAt:null};}
 function validateState(input){
  const fail=m=>{throw new Error(m);};
  if(!input||typeof input!=='object'||input.schemaVersion!==1)fail('対応していないバックアップ形式です');
@@ -167,6 +167,14 @@ function validateState(input){
   if(!ingredient(id)||!a||!ids.has(a.pokemonId)||typeof a.complete!=='boolean'||!text(a.note,500))fail('担当データの参照が不正です');
   if(a.completedAt!==null&&(!text(a.completedAt,40)||Number.isNaN(Date.parse(a.completedAt))))fail('完了日が不正です');
   state.assignments[id]={pokemonId:a.pokemonId,complete:a.complete,note:a.note,completedAt:a.completedAt};
+ }
+ // Ingredient-level progress is independent of owners, rankings and legacy history.
+ // Older backups migrate only the active ingredient's explicit completion flag.
+ const completion=input.ingredientCompletion===undefined?Object.fromEntries(Object.entries(state.assignments).filter(([,a])=>a.complete).map(([id])=>[id,true])):input.ingredientCompletion;
+ if(!completion||typeof completion!=='object'||Array.isArray(completion))fail('食材の厳選状態が不正です');
+ for(const [id,done] of Object.entries(completion)){
+  if(!ingredient(id)||typeof done!=='boolean')fail('食材の厳選状態が不正です');
+  state.ingredientCompletion[id]=done;
  }
  const berryAssignments=input.berryAssignments===undefined?{}:input.berryAssignments;
  if(!berryAssignments||typeof berryAssignments!=='object'||Array.isArray(berryAssignments))fail('きのみ担当データが不正です');

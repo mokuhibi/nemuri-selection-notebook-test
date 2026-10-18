@@ -40,3 +40,18 @@ for(const ribbonOverride of [null,0,1,2,3,4]){
 assert.equal(SleepCore.validateState(SleepCore.emptyState()).ribbonOverride,undefined);
 for(const ribbonOverride of [-1,5,'4',false])assert.throws(()=>SleepCore.validateState({...SleepCore.emptyState(),ribbonOverride}));
 console.log('PASS optional ribbon override in CSV/JSON with unchanged schema and legacy missing-field behavior');
+
+const progressState={...state,ingredientCompletion:Object.fromEntries(D.ingredients.map((i,n)=>[i.id,n%2===0]))};
+for(const encode of [x=>B.encode(x,name),JSON.stringify]){
+ const restored=C.validateState(B.decode(encode(progressState)));
+ assert.deepEqual(restored.ingredientCompletion,progressState.ingredientCompletion);
+ assert.deepEqual(restored.pokemon,state.pokemon);
+}
+const oldProgress=copy(state);delete oldProgress.ingredientCompletion;
+for(const source of [B.encode(oldProgress,name),JSON.stringify(oldProgress)])assert.equal(C.validateState(B.decode(source)).ingredientCompletion.Sausage,true);
+for(const ingredientCompletion of [null,[],{Apple:1},{Apple:'true'},{fake:true}]){
+ const before=JSON.stringify(progressState);
+ assert.throws(()=>C.validateState(B.decode(B.encode({...progressState,ingredientCompletion},name))));
+ assert.equal(JSON.stringify(progressState),before);
+}
+console.log('PASS all 19 ingredient statuses in CSV/JSON, older backups migrate, invalid progress rejected without data mutation');

@@ -262,3 +262,11 @@ body.journal-design{--ink:#202124;--muted:#777c80;--line:#ecedee;--soft:#f5f6f6;
 #license-text{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.65 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;color:inherit}
 #license-error:empty{display:none}
 #license-error{color:var(--red)}
+
+/* Food-tab progress changes only the ingredient label; preserve header geometry. */
+.journal-design .harvest-tile.completion-enabled .food-title-text{color:#202124}
+.journal-design .harvest-tile.completion-enabled.unassigned .food-title-text{color:#a2a8ab}
+.journal-design .harvest-tile.completion-enabled.ingredient-complete .food-title-text{color:#C0392B}
+.journal-design .harvest-tile .ingredient-completion-name{position:relative;display:block;height:44px;min-height:44px;margin:-11.5px 0;padding:0;background:transparent;border:0;border-radius:0;text-align:left;font-family:inherit;line-height:21px;box-shadow:none;cursor:pointer}
+.journal-design .harvest-tile .ingredient-completion-name[aria-disabled="true"]{cursor:default}
+.journal-design .harvest-tile .ingredient-completion-name:focus-visible{outline:1px solid #777c80;outline-offset:1px}
