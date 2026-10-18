@@ -251,3 +251,14 @@ body.journal-design{--ink:#202124;--muted:#777c80;--line:#ecedee;--soft:#f5f6f6;
  .journal-design.streamlined-ui .compact-options .type-filter>summary{width:max-content;max-width:100%}
  .journal-design .harvest-tile .berry-yield .berry-type{font-size:9px;padding:2px 3px}
 }
+
+/* License text is unmodified plain text, with an always-visible way back. */
+#license-dialog{width:min(720px,calc(100% - 24px));max-height:calc(100dvh - 24px);padding:0;overflow:hidden;color:var(--ink);background:#fff}
+#license-dialog[open]{display:flex;flex-direction:column}
+#license-dialog .dialog-head{flex:none;padding:14px 16px;gap:12px;margin:0;border-bottom:1px solid var(--line);padding-top:max(14px,env(safe-area-inset-top));background:#fff}
+#license-title{font-size:18px;margin:0}
+#license-close,#license-retry{min-height:44px;font-size:16px;padding:8px 14px}
+#license-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+#license-text{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.65 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;color:inherit}
+#license-error:empty{display:none}
+#license-error{color:var(--red)}

@@ -42,3 +42,18 @@ console.log('PASS all 19 ID-keyed licensed SVG watermarks, authors/years, fixed 
 
 for(const id of ['Pumpkin','Avocado']){const svg=read('assets/ingredients/'+id+'.svg');assert(svg.includes('<g transform="scale(3.8)'));assert(svg.includes('fill="'+(id==='Pumpkin'?'#fea712':'#749f3e')+'"'));assert(iconHTML.includes(id+'.svg?v=20261017-grouped'));}
 console.log('PASS grouped Pumpkin/Avocado geometry, transforms, original colors and cache refresh');
+
+// A license view must keep the app URL/data intact and preserve the original text.
+(async()=>{
+ const vm=require('node:vm'),listeners={};let responseText=read('licenses/nitoyon-ingredient-icons-MIT.txt'),fail=false;
+ const nodes={};const $=id=>nodes[id]??={textContent:'',hidden:false,open:false,scrollTop:1,focus(){this.focused=true},showModal(){this.open=true},addEventListener(type,fn){listeners[id+':'+type]=fn},close(){this.open=false;listeners[id+':close']?.()}};
+ const bodyStyle={position:'',top:'',width:'',overflow:''},moves=[],link={getAttribute:()=> 'licenses/nitoyon-ingredient-icons-MIT.txt',focus(){this.focused=true}};
+ const ctx={$,AbortController,document:{body:{style:bodyStyle}},window:{scrollY:427,scrollTo:x=>moves.push(x)},open:id=>$(id).showModal(),fetch:async(path,{signal})=>{assert.equal(path,link.getAttribute());if(fail)throw Error('offline');return {ok:true,text:async()=>responseText}}};
+ vm.createContext(ctx);const source=read('app.js');vm.runInContext(source.slice(source.indexOf('// License documents stay'),source.indexOf('function showTab(')),ctx);
+ await ctx.openLicense(link);assert.equal($('license-dialog').open,true);assert.equal($('license-text').textContent,responseText);assert($('license-close').focused);assert.equal(bodyStyle.position,'fixed');assert.equal(bodyStyle.top,'-427px');assert.equal(moves.length,0);
+ $('license-dialog').close();assert.equal(bodyStyle.position,'');assert.equal(moves[0].top,427);assert(link.focused);
+ fail=true;await ctx.openLicense(link);assert.equal($('license-dialog').open,true);assert.equal($('license-retry').hidden,false);assert($('license-error').textContent.includes('読み込めませんでした'));
+ fail=false;await $('license-retry').onclick();assert.equal($('license-text').textContent,responseText);assert.equal($('license-retry').hidden,true);$('license-dialog').close();
+ await ctx.openLicense({getAttribute:()=> 'https://example.com',focus(){}});assert.equal($('license-dialog').open,false);
+ console.log('PASS license modal: original text, close/focus/scroll restoration, offline retry, no external navigation');
+})().catch(error=>{console.error(error);process.exitCode=1});
