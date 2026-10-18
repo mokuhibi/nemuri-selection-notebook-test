@@ -7,6 +7,13 @@ const short={INGREDIENT_FINDER_S:'食S',INGREDIENT_FINDER_M:'食M',HELPING_SPEED
 const statusName={active:'解放済み',projected:'試算で解放',locked:'未解放'};
 const skillDisplayStatus=(p,threshold,mode)=>C.slotStatus(p,threshold,mode)==='projected'?'active':C.slotStatus(p,threshold,mode);
 const displaySpecies=(p,state={},result=null)=>result?.ok?C.species(result.calculationSpecies)?.name||'未確認':!C.species(p.species)?(p.customName||'未入力'):state.evolution==='final'?(C.simulatedSpecies(p,state)?.name||'進化先未選択'):C.species(p.species).name;
+// Explain the exact shared production result, never recompute it for the UI.
+function productionTrace(result){
+ const t=result.helpTrace;if(!result.ok||!t)return '';
+ const value=n=>Number(n).toLocaleString('ja-JP',{maximumFractionDigits:6});
+ const hours=D.ribbons.find(r=>r.stage===t.ribbonStage)?.hours;
+ return `<details class="production-trace"><summary class="small">計算の内訳</summary><p class="small">計算した姿：${esc(C.species(result.calculationSpecies)?.name||'未確認')}（登録：${esc(C.species(t.registeredSpecies)?.name||'未確認')}）<br>リボン：${hours===undefined?'未設定':hours+'h'}・残り進化${t.remainingEvolutions}回・間隔 ×${value(t.ribbonFactor)}${t.ribbonFactor===1?'（時間短縮なし）':''}<br>基礎 ${value(t.frequency)}秒 × Lv補正 ${value(t.levelFactor)} × 性格 ${value(t.natureFactor)} × スピード系サブスキル ${value(t.speedFactor)} × リボン ${value(t.ribbonFactor)}<br>合成補正 ${value(t.combinedFactor)}（小数第4位までに丸め） ÷ キャンチケ ${value(t.campFactor)} → ${value(result.baseInterval)}秒（秒未満切り捨て）<br>げんき補正 ×${value(result.energyFactor)} → 最終間隔 ${value(result.interval)}秒<br>1日のおてつだい ${value(result.helps)}回・食材確率 ${value(result.rate*100)}％<br>データ ${esc(D.meta.version)} / 計算 ${esc(D.meta.calcVersion)}</p></details>`;
+}
 const gourgeistSizes=Object.freeze({GOURGEIST_SMALL:'こだま',GOURGEIST_MEDIUM:'ちゅうだま',GOURGEIST_LARGE:'おおだま',GOURGEIST_JUMBO:'ギガだま'});
 function cardNameHTML(name,share=false){
  const sp=D.pokemon.find(p=>p.name===name),parts=sp&&/^(.+?)（(.+)）$/.exec(sp.name);
@@ -66,5 +73,5 @@ function targetList(kind,state,options={}){
  const assigned=i=>state.pokemon.some(p=>p.id===assignments[i.id]?.pokemonId&&!C.assignmentResult(kind,p,i.id,state).excluded);
  return items.filter(i=>!options.filter||options.filter==='all'||options.filter==='assigned'&&assigned(i)||options.filter==='empty'&&!assigned(i));
 }
-root.BoardView={cardNameHTML,layoutFoodHeaders,skillDisplayStatus,shareNameHTML,composition,ingredientCountText,sleepRibbon,short,targetList,displaySpecies,identity,evaluationSkills,orderedIngredients,render,time,nature,skills,miniSlots,slotLetters,letterSlots,daily};
+root.BoardView={productionTrace,cardNameHTML,layoutFoodHeaders,skillDisplayStatus,shareNameHTML,composition,ingredientCountText,sleepRibbon,short,targetList,displaySpecies,identity,evaluationSkills,orderedIngredients,render,time,nature,skills,miniSlots,slotLetters,letterSlots,daily};
 })(globalThis);

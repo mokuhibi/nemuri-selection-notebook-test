@@ -48,13 +48,16 @@ function production(p,mode,energy,options,withIngredients){
  const speed=Math.max(.65,1-amount('HELPING_SPEED_S')-amount('HELPING_SPEED_M')-amount('HELPING_BONUS'));
  const rate=sp.ingredientRate*n.ingredient*(1+amount('INGREDIENT_FINDER_S')+amount('INGREDIENT_FINDER_M'));
  const ribbon=D.ribbons.find(x=>x.stage===ribbonStage)?.frequencyByRemainingEvolutions[sp.remainingEvolutions]??1;
- const combined=Math.round((2-n.frequency)*speed*(1-.002*(level-1))*ribbon*10000)/10000;
- const baseInterval=Math.floor(combined*sp.frequency/(options.camp?1.2:1));
+ // Keep the adopted arithmetic and rounding order; expose the factors actually used.
+ const natureFactor=2-n.frequency,levelFactor=1-.002*(level-1),campFactor=options.camp?1.2:1;
+ const combined=Math.round(natureFactor*speed*levelFactor*ribbon*10000)/10000;
+ const baseInterval=Math.floor(combined*sp.frequency/campFactor);
  const energyFactor=energy>=80?.45:energy>=60?.52:energy>=40?.58:energy>=1?.66:1;
  const interval=baseInterval*energyFactor,helps=86400/interval;
  const counts=Object.fromEntries(D.ingredients.map(i=>[i.id,0]));
  if(withIngredients)for(const i of activeSlots){const s=sp.slots[i].find(x=>x.id===p.slots[i]);counts[s.id]+=helps*rate*s.amount/activeSlots.length;}
- return {ok:true,level,calculationSpecies:sp.id,camp:!!options.camp,counts,interval,helps,rate,energyFactor,baseInterval};
+ return {ok:true,level,calculationSpecies:sp.id,camp:!!options.camp,counts,interval,helps,rate,energyFactor,baseInterval,
+ helpTrace:{registeredSpecies:p.species,frequency:sp.frequency,remainingEvolutions:sp.remainingEvolutions,ribbonStage,ribbonFactor:ribbon,natureFactor,levelFactor,speedFactor:speed,campFactor,combinedFactor:combined}};
 }
 // Neroli's Lab: berryPowerForLevel, calculateNrOfBerriesPerDrop,
 // calculateAverageProduce. Same normal-help conditions as ingredient estimates.
