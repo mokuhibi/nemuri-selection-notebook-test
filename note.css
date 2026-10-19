@@ -1,145 +1,209 @@
-/* Note-style presentation only. Calculations and storage remain in core.js. */
-.harvest-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:17px}.harvest-tile{min-width:0;padding:12px 0 14px;border:0;border-top:1px solid #dfe2e3;background:#fff;display:flex;flex-direction:column;gap:7px;min-height:190px}.compact-top{display:flex;align-items:center;justify-content:space-between;min-height:26px}.mini-slots{display:flex;gap:3px;font-size:21px;line-height:1.2}.mini-slots .locked{opacity:.3}.mini-slots .projected{opacity:.7}.compact-yield{display:flex;align-items:center;gap:3px}.target-yield{background:transparent;padding:0;min-height:30px;white-space:nowrap}.target-yield b,.empty-food-count{font-size:27px;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}.compact-yield small{font-size:10px}.food-card-title{margin:0;display:flex;align-items:center;justify-content:space-between;gap:3px;min-height:21px;font-weight:500}.food-title-text{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.empty-ingredient{padding:0;background:none;min-height:21px;text-align:left}.sleep-ribbon{display:flex;align-items:center;gap:2px;font-size:10px;color:#697d6b;white-space:nowrap}.sleep-ribbon.neutral{color:#a5aaad}.compact-identity{display:grid;grid-template-columns:minmax(0,1fr) 33px 43px;gap:2px;align-items:center;min-height:32px}.mini-person{background:transparent;text-align:left;padding:0;min-width:0;min-height:30px;line-height:1.3;font-size:14px;font-weight:700;overflow-wrap:anywhere}.card-level{font-size:10px;color:#6f7578;font-variant-numeric:tabular-nums;white-space:nowrap}.mini-nature{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:1px;width:43px;min-height:27px;border:1px solid #d9dfdc;border-radius:4px;background:#f6f8f7;font-size:10px;font-weight:700}.mini-nature .up{color:#315e4b}.mini-nature .down{color:#8f5c57}.mini-nature .neutral{color:#9a9fa2}.compact-secondary{min-height:13px;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fixed-skills{display:flex;flex-direction:column;gap:4px;margin-top:0}.skill-row{display:grid;grid-template-columns:repeat(var(--skill-columns),minmax(0,1fr));gap:3px}.mini-skill{display:flex;align-items:center;justify-content:center;font-size:9px;white-space:nowrap;border:1px solid;border-radius:3px;min-height:21px;line-height:1.2;padding:2px 0}.rarity-gold{background:#fff2ca;border-color:#d5b452;color:#7f651c}.rarity-blue,.rarity-silver{background:#e9f2fb;border-color:#99badb;color:#38638a}.rarity-white{background:#f7f8f8;border-color:#c8ced1;color:#555f64}.mini-skill.projected{border-style:dashed;background:color-mix(in srgb,currentColor 4%,white);opacity:.85}.mini-skill.locked{opacity:.38}.mini-skill.absent{background:#fafafa;color:#bec2c4;border-color:#eceeef}.mini-skill.uncertain{opacity:.4}.empty-owner{min-height:110px}.empty-owner:after{content:"担当なし";display:block;font-size:12px;color:#a2a8ab;padding-top:12px}.berry-yield{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:30px 22px;gap:4px;align-items:center;background:none;border-radius:0;text-align:left;padding:0;min-width:0}.berry-type{grid-area:1/1;font-size:12px;font-weight:700;justify-self:start;border-radius:4px;color:#fff;padding:4px 6px;background:var(--type-color,#73797e);white-space:nowrap}.berry-yield b{grid-area:1/2;font-size:23px;font-variant-numeric:tabular-nums;letter-spacing:-.045em}.berry-name{grid-area:2/1;font-size:12px}.berry-yield .sleep-ribbon{grid-area:2/2;justify-self:end}.berry-tile{border-top:2px solid color-mix(in srgb,var(--type-color,#73797e) 40%,white)}.berry-empty{font-size:11px;color:#a2a8ab;padding-top:12px}.berry-error{font-size:10px;color:#8f5c57}.map-energy-label{font-size:9px;font-weight:400;margin-right:3px;color:var(--muted)}
-/* Existing app type palette, reused without changes. */
+/* Editorial presentation. Source/reference and ownership: README.md (デザインの管理).
+ * style.css = layered legacy feature layout; this file = sole current screen design;
+ * share.css = export geometry only. Do not append revision overrides here.
+ */
+:root {
+ color-scheme:light; --ink:#202124; --muted:#777c80; --line:#ecedee;
+ --paper:#fff; --cream:#f5f6f6; --soft:#f5f6f6; --light:#f5f6f6;
+ --green:#202124; --green-dark:#343638; --red:#985e52; --shadow:none;
+ --input-line:#dcdddf; --radius:6px; --page-gutter:20px;
+}
+body {background:var(--paper);color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;-webkit-font-smoothing:antialiased;padding:0}
+.site-header {display:block;width:calc(100% - 40px);max-width:800px;height:auto;min-height:0;margin:24px auto;padding:0 0 20px;border-bottom:1px solid var(--line)}
+.brand {display:block;font-size:16px;line-height:1.5;letter-spacing:.2px;font-weight:600}
+.brand .brand-mark {display:none}
+.brand-copy {display:flex;flex-direction:column;gap:5px}
+.brand-copy b {font-size:16px;line-height:24px;font-weight:600}
+.brand-copy small {margin:0;color:#909497;font-size:9px;font-weight:400;line-height:13.5px;letter-spacing:1.5px}
+main {width:100%;max-width:840px;margin:0 auto;padding:0 var(--page-gutter) calc(120px + env(safe-area-inset-bottom))}
+.view {padding-top:0}
+.section-top {display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-height:44px;margin:0 0 16px}
+h2,.section-top h2 {font-size:28px;font-weight:700;line-height:1.3;letter-spacing:-.5px;margin:0;color:var(--ink)}
+h3,h4 {font-size:17px;font-weight:600;line-height:1.5;letter-spacing:-.3px;color:var(--ink)}
+.assignment-header {display:block;margin:0 0 18px}
+.assignment-header h2 {display:flex;align-items:baseline;gap:8px}
+.assignment-count {font-size:12px;font-weight:400;letter-spacing:0;color:var(--muted);white-space:nowrap}
+.button,.button.primary,.button.subtle {min-height:44px;border:1px solid #e3e4e5;border-radius:var(--radius);padding:9px 14px;background:var(--soft);color:var(--ink);font-size:13px;font-weight:500;box-shadow:none;transition:background .15s;transform:none}
+.button:hover,.button.primary:hover {background:#eceeee;transform:none}
+.button.danger {color:var(--red)}
+#share-open {font-size:12px;min-width:44px;padding:6px 10px;background:#fff}
+input:not([type=checkbox]),select,textarea {background:#fff;color:var(--ink);border:1px solid var(--input-line);border-radius:var(--radius);font-size:16px;min-height:46px;padding:9px 10px;max-width:100%}
+input[type=checkbox] {accent-color:var(--ink)}
+.icon-button {color:var(--muted);background:transparent}
+:focus-visible {outline:2px solid #777c80;outline-offset:3px}
+/* Everyday conditions remain visible, in two deliberate rows on phones. */
+.simulation-settings {display:block;padding:0 0 4px;border:0;margin:0}
+.simulation-group {display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%}
+.compact-level-evolution {display:grid;grid-template-columns:76px minmax(68px,.8fr) minmax(135px,1.3fr);align-items:center;gap:8px;min-width:0;width:100%}
+.level-control,.ribbon-control {display:flex;align-items:center;gap:6px;margin:0;min-width:0;white-space:nowrap}
+.control-title,.ribbon-control>span {font-size:12px;font-weight:500;color:var(--muted)}
+.simulation-settings select {font-weight:500;line-height:1.3;padding:9px 5px;width:100%;min-width:0}
+#level-select {flex:1;width:0}
+#evolution-mode {width:100%;min-width:0}
+#ribbon-mode {flex:1;width:0;min-width:0}
+.compact-camp-conditions {display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;width:100%;margin:0}
+.check-control {display:flex;align-items:center;gap:6px;min-height:44px;padding:0;font-size:12px;white-space:nowrap;color:var(--ink);cursor:pointer}
+.check-control input {width:18px;height:18px;margin:0}
+.condition-button {min-width:44px;min-height:44px;padding:6px 8px;background:transparent;border:0;color:var(--muted);font-size:12px}
+.food-maximum {min-width:44px;min-height:44px;padding:6px 10px;background:#fff;border:1px solid var(--input-line);border-radius:6px;font-size:12px;color:var(--muted);margin-left:auto}
+.food-maximum[aria-pressed=true] {background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+.final-form-choices {background:var(--soft);border:0;border-radius:6px}
+/* Text tabs and a quieter native sort menu, with full-size hit areas. */
+.compact-options {position:relative;display:grid;grid-template-columns:minmax(0,1fr) 106px;align-items:center;gap:4px;min-height:46px;border-bottom:1px solid var(--line)}
+.filter-chips {display:flex;align-items:center;gap:12px;min-width:0;margin:0}
+.filter-chips button {position:relative;min-width:44px;min-height:44px;padding:8px 0;border:0;border-radius:0;background:transparent;font-size:12px;font-weight:400;color:var(--muted);white-space:nowrap}
+.filter-chips button.selected,.filter-chips button[aria-pressed=true] {background:transparent;font-weight:650;color:var(--ink)}
+.filter-chips button.selected::after,.filter-chips button[aria-pressed=true]::after {content:"";position:absolute;bottom:1px;left:calc(50% - 8px);height:2px;width:16px;background:var(--ink)}
+.compact-options .filter-chips {gap:6px;justify-content:space-between}
+.sort-control {position:relative;display:block;width:100%;min-width:0;height:44px}
+/* Native select keeps 16px text to prevent iPhone focus zoom; its visible hit box is 44px high. */
+.sort-control>.compact-sort {position:absolute;right:0;top:0;display:block;width:125%;max-width:none;height:55px;min-height:55px;margin:0;padding:6px 0;border:0;border-radius:0;background:transparent;font-size:16px;font-weight:400;color:var(--muted);transform:scale(.8);transform-origin:right top}
+.compact-options:has(.type-filter) {grid-template-columns:minmax(0,1fr) 66px 106px;gap:4px}
+.type-filter {border:0;padding:0;margin:0;color:var(--muted);font-size:12px;min-width:0}
+.type-filter>summary {display:block;list-style:none;min-height:44px;padding:12px 0;white-space:nowrap;cursor:pointer}
+.type-filter>summary::-webkit-details-marker {display:none}
+.type-filter>summary::after {content:"⌄";margin-left:3px}
+.type-filter[open]>summary {font-weight:600;color:var(--ink)}
+.type-options {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:white;border:1px solid var(--line);border-radius:6px;padding:12px}
+.compact-options .type-options {position:absolute;left:0;right:0;top:100%;z-index:20;max-height:310px;overflow:auto}
+.type-options label {display:flex;align-items:center;gap:5px;min-height:44px}
+.type-options button {grid-column:1/-1;min-height:44px}
+/* Assignment cards: one consistent grid, with a reserved footprint for empty cards. */
+.harvest-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(174px,1fr);gap:20px 18px;align-items:stretch}
+.harvest-tile {position:relative;isolation:isolate;container-type:inline-size;overflow:hidden;display:flex;flex-direction:column;gap:4px;min-width:0;min-height:0;height:auto;padding:0 0 8px;border:0;border-radius:0;background:#fff;box-shadow:none}
+.harvest-tile.composition-design>.ingredient-watermark {position:absolute;right:5px;top:30px;width:110px;height:110px;object-fit:contain;opacity:.12;pointer-events:none;user-select:none;z-index:0}
+.harvest-tile>:not(.ingredient-watermark) {position:relative;z-index:1}
+.restored-food-head,.berry-card-head {display:flex;flex-direction:column;justify-content:space-between;flex:none;width:100%;min-width:0;height:58px;gap:0}
+.food-card-title.food-divider {display:flex;align-items:center;justify-content:flex-start;gap:6px;min-height:22px;margin:0;padding:0;font-size:14px;line-height:22px}
+.food-divider::before {display:none}
+.food-divider::after {content:"";display:block;flex:1 1 6px;min-width:5px;height:1px;background:var(--line)}
+.food-divider .food-title-text {flex:0 1 auto;min-width:0;max-width:100%;margin:0;padding:0;border:0;background:transparent;border-radius:0;font-size:14px;font-weight:700;line-height:22px;white-space:normal;overflow-wrap:anywhere;color:var(--ink);text-align:left;letter-spacing:0}
+.unassigned .food-divider .food-title-text {font-weight:400;color:#a2a8ab}
+.ingredient-complete.completion-enabled .food-title-text {color:#c0392b}
+.food-divider .ingredient-completion-name {display:block;position:relative;height:44px;min-height:44px;margin:-11px 0;box-shadow:none;cursor:pointer}
+.ingredient-completion-name[aria-disabled=true] {cursor:default}
+.compact-top {display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:32px}
+.preview-composition {display:flex;flex:none;align-items:center;gap:3px;margin:0;font-size:20px;font-weight:650;line-height:1.2;letter-spacing:.04em}
+.preview-composition>span {font:inherit;opacity:1;background:none}
+.preview-composition>.composition-target {color:#000}
+.preview-composition>.composition-other {color:#ccc}
+.compact-yield {display:flex;align-items:center;gap:3px;min-width:0;min-height:0;margin:0;padding:0;background:none;border:0;color:var(--ink)}
+.target-yield {display:flex;align-items:center;justify-content:flex-end;min-height:32px;padding:0;margin:0;background:none;border:0;color:var(--ink);font:inherit;text-align:right}
+.target-yield b,.empty-food-count,.berry-yield b {color:var(--ink);font-size:32px;font-weight:650;line-height:1;letter-spacing:-1.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.compact-yield small {font-size:10px;line-height:1.3;color:var(--muted)}
+.assignment-identity {display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:34px 26px;gap:2px;min-height:62px;align-items:center}
+.assignment-identity>.mini-person {display:block;grid-column:1/-1;grid-row:1;width:100%;min-width:0;height:34px;min-height:34px;padding:0;margin:0;border:0;background:transparent;text-align:left;overflow:visible}
+.assignment-identity .mini-person-name {display:grid;grid-template-rows:20px 12px;gap:2px;height:34px;white-space:normal;overflow:visible;font-size:14px;letter-spacing:0;color:var(--ink)}
+.species-name-main {color:var(--ink);display:block;min-width:0;font-size:14px;font-weight:600;line-height:20px;white-space:nowrap}
+.species-name-form {display:block;min-width:0;font-size:10px;font-weight:400;line-height:12px;white-space:nowrap;color:var(--muted);letter-spacing:0}
+.level-ribbon {grid-column:1;grid-row:2;display:flex;align-items:center;gap:4px;min-width:0;white-space:nowrap}
+.card-level {font-size:11px;line-height:1.4;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;text-align:left}
+.sleep-ribbon {display:inline-flex;align-items:center;gap:2px;font-size:10px;line-height:1.4;color:#69766c;white-space:nowrap}
+.sleep-ribbon svg {width:8px;height:11px;flex:none}
+.sleep-ribbon.neutral {color:#a2a8ab}
+.mini-nature {display:flex;align-items:center;justify-content:flex-end;gap:3px;width:max-content;min-width:0;min-height:24px;padding:2px 0;border:0;background:transparent;font-size:11px;font-weight:600;white-space:nowrap}
+.assignment-identity>.mini-nature {grid-column:2;grid-row:2;justify-self:end}
+.mini-nature :is(.up,.down,.neutral) {display:inline-flex;align-items:center;min-height:0;padding:0;border:0;background:transparent;font:inherit;color:var(--ink);white-space:nowrap}
+.mini-nature .neutral {color:#a2a8ab}
+.mini-nature .up>.nature-symbol {color:#b34a45}
+.mini-nature .down>.nature-symbol {color:#346da6}
+.fixed-skills {display:grid;width:100%;gap:3px;margin:0;min-height:0}
+.skill-row {display:grid;grid-template-columns:repeat(var(--skill-columns,3),minmax(0,1fr));gap:3px;min-height:0}
+.mini-skill {display:flex;align-items:center;justify-content:center;position:relative;min-width:0;min-height:20px;padding:2px 0;border:1px solid var(--skill-line,#e6e7e8);border-radius:3px;background:var(--skill-bg,#f8f9f9);color:var(--skill-ink,#62696d);font-size:10px;font-weight:500;line-height:1.2;white-space:nowrap;box-shadow:none;opacity:1}
+.rarity-gold {--skill-line:#e2d5aa;--skill-bg:#faf6e8;--skill-ink:#8a702e}
+.rarity-silver,.rarity-blue {--skill-line:#d1deea;--skill-bg:#f0f5fa;--skill-ink:#4d7192}
+.rarity-white {--skill-line:#e1e4e5;--skill-bg:#f8f9f9;--skill-ink:#62696d}
+.mini-skill.projected {border-style:dashed;background:#fff;opacity:.85}
+.mini-skill.locked {opacity:.45;background:#fff;border-style:solid}
+.mini-skill.absent {background:#fafafa;color:#c8ccce;border-color:#f0f1f1;opacity:1}
+.mini-skill.uncertain {opacity:.4;border-style:dotted}
+.mini-skill sup {position:absolute;right:1px;top:0;font-size:7px}
+.empty-owner {min-height:0}
+.empty-owner::after {content:none}
+.compact-secondary.no-nickname {display:none}
+.berry-yield {display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:32px;align-items:center;gap:4px;width:100%;min-height:32px;padding:0;margin:0;border:0;background:none;text-align:left}
+.berry-yield .berry-type {grid-column:1;grid-row:1;justify-self:start;width:auto;margin:0;padding:3px 5px;border:0;border-radius:3px;background:var(--type-color,#73797e);color:#fff;font-size:10px;font-weight:600;line-height:1.2;white-space:nowrap}
+.berry-yield b {grid-column:2;grid-row:1;justify-self:end;font-size:27px;font-size:clamp(20px,16cqi,27px);color:var(--ink)}
+.berry-error {font-size:10px;color:var(--red);overflow-wrap:anywhere}
+.map-energy-label {font-size:9px;font-weight:400;color:var(--muted);margin-right:3px}
 .type-normal{--type-color:#756653}.type-fire{--type-color:#b95226}.type-water{--type-color:#2873ad}.type-electric{--type-color:#947000}.type-grass{--type-color:#477c32}.type-ice{--type-color:#2b7a87}.type-fighting{--type-color:#a44732}.type-poison{--type-color:#9155a4}.type-ground{--type-color:#8c693b}.type-flying{--type-color:#586ba0}.type-psychic{--type-color:#b94373}.type-bug{--type-color:#607b28}.type-rock{--type-color:#88752d}.type-ghost{--type-color:#725492}.type-dragon{--type-color:#6655b7}.type-dark{--type-color:#615652}.type-steel{--type-color:#597079}.type-fairy{--type-color:#ac558a}
-.dynamic-favorites{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:12px}.dynamic-favorites select{font-size:12px;min-width:0}.map-note{font-size:11px;color:var(--muted);line-height:1.6;margin:10px 0 0}
 
-/* Compact preview revision: food inventory badges are omitted by the shared adapter. */
-.harvest-tile{min-height:174px;gap:6px}
-.food-title-text{font-size:13px}
-.mini-person{font-size:15px}
-.target-yield b,.empty-food-count{font-size:29px}
-.berry-name{font-size:13px}
-.berry-yield b{font-size:25px}
-.mini-skill{font-size:10px}
-@media(max-width:350px){.mini-person{font-size:14px}.mini-skill{font-size:9px}.food-title-text,.berry-name{font-size:12px}}
-
-/* Ribbon follows Lv; names get a full-width row so long names cannot collide. */
-.harvest-tile{min-height:168px;padding-top:10px;padding-bottom:10px;gap:4px}
-.compact-identity{grid-template-columns:minmax(0,1fr) 43px;grid-template-rows:minmax(22px,auto) 25px;gap:2px;min-height:49px}
-.compact-identity .mini-person{grid-column:1/-1;grid-row:1;white-space:normal;overflow-wrap:anywhere;min-height:22px;line-height:1.3}
-.level-ribbon{grid-column:1;grid-row:2;display:flex;align-items:center;gap:5px;min-width:0;white-space:nowrap}
-.level-ribbon .card-level{font-size:11px}
-.level-ribbon .sleep-ribbon{display:inline-flex;font-size:10px;gap:0;color:#66786a;white-space:nowrap}
-.compact-identity .mini-nature{grid-column:2;grid-row:2;justify-self:end}
-.compact-secondary.no-nickname{display:none}
-@media(max-width:350px){.compact-identity{grid-template-columns:minmax(0,1fr) 39px}.level-ribbon{gap:4px}.level-ribbon .sleep-ribbon{font-size:9px}}
-
-/* Alternate food-card design; the shared adapter sets opacity by assignment state. */
-.design-options{display:flex;gap:6px;margin:0 0 16px}
-.design-options button{flex:1;min-width:0;padding:6px 8px;font-size:12px;color:#747c80}
-.design-options button[aria-pressed="true"]{color:#252729;background:#e9ebeb;font-weight:700}
-.harvest-tile.composition-design{position:relative;isolation:isolate;overflow:hidden}
-.composition-design>.ingredient-watermark{position:absolute;right:5px;top:30px;width:110px;height:110px;object-fit:contain;opacity:.12;pointer-events:none;user-select:none;z-index:0}
-.composition-design>:not(.ingredient-watermark){position:relative;z-index:1}
-.preview-composition{display:flex;align-items:center;gap:3px;font-size:22px;font-weight:750;letter-spacing:.06em;line-height:1.2}
-.preview-composition .projected{opacity:.7}.preview-composition .locked{opacity:.35}
-
-/* Ingredient name belongs to the section rule, not the Pokemon identity. */
-.harvest-tile.heading-center,.harvest-tile.heading-left{border-top:0;padding-top:0;min-height:156px}
-.food-card-title.food-divider{display:flex;align-items:center;gap:5px;min-height:19px;margin:0 0 1px;font-size:13px;font-weight:600;line-height:1.4;color:#535b5f}
-.food-divider::before,.food-divider::after{content:"";display:block;flex:1 1 0;min-width:6px;height:1px;background:#dfe2e3}
-.food-divider .food-title-text{flex:0 1 auto;min-width:0;font-size:13px;line-height:1.4;font-weight:600;color:#535b5f}
-.heading-left .food-divider::before{display:none}
-.heading-left .food-divider .food-title-text{flex-shrink:1}
-@media(max-width:350px){.food-divider .food-title-text{font-size:12px}.food-card-title.food-divider{gap:4px}}
-
-/* Berry text-only cards follow the left-aligned food heading / metric / identity. */
-.harvest-tile.berry-text-design{border:0;background:#fff;min-height:156px;padding-top:0}
-.berry-text-design .berry-yield{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:30px;gap:2px;min-height:30px}
-.berry-text-design .berry-yield b{grid-column:2;grid-row:1;font-size:29px}
-.berry-text-design .berry-type{grid-column:1;grid-row:1;color:var(--type-color);background:#fff;border:1px solid var(--type-color);padding:3px 4px;font-size:11px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
-.berry-text-design .empty-owner{min-height:110px}
-@media(max-width:350px){.berry-text-design .berry-type{font-size:10px;padding:2px}.berry-text-design .berry-yield b{font-size:24px}}
-
-/* Role highlighting uses actual registered slot IDs, independent of unlock opacity. */
-.preview-composition>span.composition-target,.preview-composition>span.composition-other{opacity:1;font-size:inherit;font-weight:inherit}
-.preview-composition>span.composition-target{color:#000000}
-.preview-composition>span.composition-other{color:#cccccc}
-
-/* Content-sized rows; badges follow identity instead of flex auto-space. */
-.harvest-grid{grid-auto-rows:auto;align-items:stretch}
-.harvest-tile,.harvest-tile.heading-center,.harvest-tile.heading-left,.harvest-tile.berry-text-design{height:auto;min-height:0;gap:3px;padding-bottom:8px}
-.harvest-tile .fixed-skills{margin-top:0;gap:3px}
-.harvest-tile .empty-owner,.berry-text-design .empty-owner{min-height:0}
-.empty-owner:after{padding-top:2px}
-.berry-text-design .berry-type{color:#fff;background:var(--type-color);border-color:var(--type-color)}
-
-/* Opacity is set from the existing assigned/unassigned card state by the adapter. */
-.opacity-options{font-size:12px;color:#697276;margin:0 0 14px}
-.opacity-options summary{cursor:pointer;min-height:32px;line-height:32px}
-.opacity-options small{font-size:10px;color:#969c9f;margin-left:6px}
-.opacity-options .design-options{margin:5px 0 0}
-
-/* Uniform watermark, with assignment conveyed by heading weight and known values. */
-.harvest-tile.assigned .food-divider .food-title-text{font-weight:700}
-.harvest-tile.unassigned .food-divider .food-title-text{font-weight:400}
-/* Equal implicit rows use the tallest content in each ingredient/berry grid.
- * Empty assignments reserve the same space without placeholder information. */
-.harvest-grid{grid-auto-rows:1fr;align-items:stretch}
-
-/* Application shell: shared across all six screens, independent of data/state. */
-:root{color-scheme:light;--ink:#252729;--green:#353a3c;--green-dark:#202426;--muted:#818689;--line:#eaecee;--paper:#fff;--cream:#f5f6f6;--light:#f0f2f2;--shadow:none}
-body{background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif}
-.site-header{height:auto;min-height:94px;padding:22px 24px;max-width:1000px}.brand{font-size:20px;letter-spacing:0}.brand-mark{border-radius:9px;background:#fff}.brand small{color:#92979a}.local-indicator{color:var(--muted)}
-main{max-width:950px;padding:0 24px 28px}.view{padding-top:16px}h2,.assignment-header h2,:is(#view-cooking,#view-maps)>.section-top h2{font-size:28px;font-weight:750;letter-spacing:-.035em}.assignment-count{color:var(--muted);font-weight:400}.section-top{margin:0 0 18px;min-height:44px}
-.button,.button.primary,.button.primary:hover,.filter-chips button.selected{background:#f3f4f4;color:#252729;border:1px solid transparent;box-shadow:none}.button:hover{background:#e9ebeb;transform:none}.button.danger{color:#965955}.button{border-radius:7px;min-height:40px}.filter-chips button{border-radius:6px}.filter-chips button.selected{font-weight:700}.tabs{background:#fff;border-top:1px solid var(--line);box-shadow:none;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;padding-top:0}.tabs .tab{background:none;border-radius:0;font-size:12px;min-height:58px;color:#92989b;position:relative;white-space:nowrap}.tabs .tab.active{background:none;color:#252729}.tabs .tab.active:before{content:"";position:absolute;top:0;left:calc(50% - 9px);height:2px;width:18px;background:#252729}
-.simulation-settings,.compact-board .simulation-settings{padding:12px 0;border-bottom:1px solid var(--line)}.simulation-settings select,.assignment-sort select{background:#f5f6f6;border:0;color:var(--ink)}.simulation-settings .check-control{color:#535b5f}.check-control input[type=checkbox],.type-options input{accent-color:#353a3c}.type-filter{border:0;border-radius:0;border-bottom:1px solid var(--line);padding:4px 0 8px;color:#697276}
-.recipe-picker,.source-card,.compare-card,.relation-card,.recipe-ingredient-card,.member-grid .member-card{background:#fff;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none}.recipe-symbol,.recipe-quantities div,.daily-yield,.slot-field,.notice,.extra-details,.empty-message{background:#f5f6f6;color:#697276}.recipe-picker{padding:18px 0}.source-card{padding:20px 0}.source-card p,.source-card li{color:#697276}.recipe-ingredient-card{color:var(--ink)}.recipe-quantities dt,.level-text,.quantity-note,.member-meta,.member-owned-skills small{color:#818689}.relation-card{padding:10px 0}.source-grid{gap:20px 30px}
-dialog,dialog .dialog-head,dialog .dialog-footer{background:#fff;border-color:var(--line);box-shadow:none}dialog{border-radius:12px}dialog::backdrop{background:#0005;backdrop-filter:none}input:not([type=checkbox]),select,textarea{border-color:#e0e3e4;color:var(--ink)}.icon-button{background:transparent;color:#697276}.nature-effects{background:#f5f6f6}.assignment-fields label{background:#f5f6f6;border-color:#e0e3e4}.compare-card .daily-yield{background:#f5f6f6}.help-stats dd{color:var(--ink)}footer,footer>span:first-child{color:var(--muted)}
-/* Explicit assignment selectors supersede old fixed heights without altering records. */
-.harvest-grid{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:1fr;gap:16px 20px;align-items:stretch}
-.harvest-tile.composition-design,.harvest-tile.berry-text-design,.harvest-tile.unassigned{height:auto;min-height:0;padding:0 0 8px;gap:3px;border:0;border-radius:0;box-shadow:none;background:#fff;display:flex;flex-direction:column}
-.harvest-tile .food-card-title.food-divider{display:flex;align-items:center;gap:5px;min-height:19px;margin:0 0 1px;padding:0;color:#535b5f;line-height:1.4;font-size:13px;font-weight:600;overflow:visible}.harvest-tile .food-divider .food-title-text{font-size:13px;line-height:1.4;color:#535b5f}.harvest-tile .empty-ingredient{background:none;padding:0;min-height:19px;max-width:100%;width:auto;border:0;color:#535b5f}
-.harvest-tile .compact-top{display:flex;justify-content:space-between;align-items:center;min-height:30px;gap:3px}.harvest-tile .compact-yield{border:0;background:none;padding:0;margin:0;min-height:0;min-width:0;gap:3px}.harvest-tile .target-yield{padding:0;min-height:30px;background:none;border:0;color:#252729}.harvest-tile .target-yield b,.harvest-tile .empty-food-count{font-size:29px;line-height:1;letter-spacing:-.05em}.harvest-tile .assignment-identity{display:grid;grid-template-columns:minmax(0,1fr) 43px;grid-template-rows:minmax(22px,auto) 25px;gap:2px;min-height:49px;flex:none;align-items:center}.harvest-tile .assignment-identity .mini-person{grid-column:1/-1;grid-row:1;padding:0;margin:0;background:none;border:0;min-height:22px;color:#252729;text-align:left;white-space:normal;overflow-wrap:anywhere}.harvest-tile .mini-person-name{font-size:15px;line-height:1.3;white-space:normal;overflow:visible;color:#252729}.harvest-tile .level-ribbon .card-level{font-size:11px;color:#6f7578}.harvest-tile .mini-nature{display:flex;align-items:center;justify-content:center;gap:1px;flex-wrap:wrap;width:43px;height:auto;min-height:25px;padding:2px 1px;border:1px solid #cdd6d1;border-radius:4px;background:#f6f8f7;font-size:11px;font-weight:700}.harvest-tile .mini-nature :is(.up,.down,.neutral){font-size:10px;font-weight:700;line-height:1.2;padding:0;background:none;border:0}.harvest-tile .mini-nature .up{color:#315e4b}.harvest-tile .mini-nature .down{color:#8f5c57}.harvest-tile .mini-nature .neutral{color:#9a9fa2}
-.harvest-tile .fixed-skills{margin:0;min-height:0;gap:3px}.harvest-tile .fixed-skills .skill-row{min-height:0;gap:3px}.harvest-tile .fixed-skills .mini-skill{min-width:0;min-height:21px;padding:2px 0;font-size:10px;line-height:1.2;white-space:nowrap;border-radius:3px;box-shadow:none}.harvest-tile .mini-skill.projected{border-style:dashed;opacity:.85;box-shadow:none}.harvest-tile .mini-skill.projected.rarity-gold{background:#fffaf0}.harvest-tile .mini-skill.projected.rarity-silver{background:#f4f8fd}.harvest-tile .mini-skill.projected.rarity-white{background:#fafbfb}.harvest-tile .mini-skill.locked{opacity:.38}.harvest-tile .mini-skill.absent{background:#fafafa;color:#bec2c4;border-color:#eceeef;opacity:1}
-.harvest-tile .berry-yield{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:30px;min-height:30px;padding:0;margin:0;gap:2px;background:none;border:0;border-radius:0}.harvest-tile .berry-yield .berry-type{grid-column:1;grid-row:1;width:auto;margin:0;justify-self:start;background:var(--type-color);color:#fff;border:1px solid var(--type-color);font-size:11px;line-height:1.2;padding:3px 4px;border-radius:4px;white-space:nowrap}.harvest-tile .berry-yield b{grid-column:2;grid-row:1;justify-self:end;font-size:27px;line-height:1.1;color:#252729;letter-spacing:-.045em}.harvest-tile .ingredient-watermark{opacity:.12}
-.member-grid{grid-auto-rows:1fr}.member-grid .member-card{height:auto;min-height:0;padding:10px 0;gap:4px}.member-card .compact-identity{display:grid;grid-template-columns:minmax(0,1fr) 33px 43px;grid-template-rows:auto;min-height:32px}.member-card .compact-identity .mini-person{grid-column:1;grid-row:1}.member-card .compact-identity .mini-nature{grid-column:3;grid-row:1}.member-card .mini-person-name{font-size:14px}.member-card .compact-secondary{white-space:normal;min-height:0}.member-card .member-detail{background:#f5f6f6;border:0;color:#252729}
-@media(max-width:740px){main{padding-left:20px;padding-right:20px}.site-header{padding:20px;gap:10px;flex-wrap:wrap}.brand{font-size:18px;gap:9px}.brand-mark{width:32px;height:32px}.header-actions{margin-left:auto}.local-indicator{display:none}.header-actions .button{padding:8px;font-size:11px}.harvest-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:14px}.source-grid{grid-template-columns:1fr}.assignment-header h2,:is(#view-cooking,#view-maps)>.section-top h2,h2{font-size:27px}.member-grid{grid-auto-rows:1fr}.member-grid .member-card{height:auto;min-height:0}.tabs .tab{font-size:12px}.recipe-picker{gap:10px}.recipe-fields label{min-width:0}.recipe-symbol{display:none}}
-@media(min-width:560px) and (max-width:850px){.harvest-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:350px){main{padding-left:14px;padding-right:14px}.site-header{padding:18px 14px}.harvest-grid{column-gap:10px}.harvest-tile .mini-person-name{font-size:14px}.harvest-tile .fixed-skills .mini-skill{font-size:9px}.harvest-tile .food-divider .food-title-text{font-size:12px}.harvest-tile .berry-yield b{font-size:24px}}
-/* Reserve the compact populated-card footprint even when every owner is empty. */
-.harvest-grid{grid-auto-rows:minmax(156px,1fr)}
-.skill-picker,.skill-picker-header{background:#fff;border-color:#e0e3e4}.skill-choice-group h4,.species-field>small,.eyebrow{color:#818689}.skill-slot[aria-expanded=true],.skill-choice[aria-pressed=true]{outline-color:#535b5f}.notice.error{background:#fff4f2;color:#96544b}
-/* Legacy mobile main width already subtracted margins; avoid double side gutters. */
-main{width:100%;margin-left:auto;margin-right:auto}
-.harvest-tile .assignment-identity .mini-nature{width:43px}
-@media(max-width:350px){.harvest-tile .assignment-identity{grid-template-columns:minmax(0,1fr) 39px}.harvest-tile .assignment-identity .mini-nature{width:39px}.harvest-tile .level-ribbon{gap:3px}.harvest-tile .level-ribbon .card-level{font-size:10px}}
-
-/* Only direction symbols carry color; nature values and purpose rules are unchanged. */
-.mini-nature .up,.mini-nature .down,.harvest-tile .mini-nature .up,.harvest-tile .mini-nature .down{color:var(--ink)}
-.mini-nature .up>.nature-symbol{color:#b34a45}
-.mini-nature .down>.nature-symbol{color:#346da6}
-
-/* Adopted header preview: application UI only; share-sheet styles stay unchanged. */
-.streamlined-ui .site-header{min-height:76px;padding:18px 20px;display:flex;justify-content:center}
-.streamlined-ui .brand{font-size:19px;gap:10px}.streamlined-ui .brand-mark{width:30px;height:30px}
-.streamlined-ui .assignment-view{padding-top:12px}.streamlined-ui .assignment-header{gap:4px;margin-bottom:10px}
-.streamlined-ui .assignment-header>.section-top{gap:8px;min-height:44px;margin:0 0 3px}
-.streamlined-ui .assignment-header h2{font-size:27px;gap:6px}.streamlined-ui .assignment-count{font-size:12px}
-.streamlined-ui #share-open{font-size:11px;min-height:44px;padding:8px 9px;white-space:nowrap}
-.streamlined-ui .simulation-settings{padding:0;border:0;margin:0;min-height:44px}
-.streamlined-ui .simulation-settings .simulation-group{display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;gap:5px;min-height:44px}
-.streamlined-ui .compact-level-evolution,.streamlined-ui .compact-camp-conditions{display:flex;align-items:center;gap:5px;flex:0 0 auto;min-width:0}
-.streamlined-ui .compact-camp-conditions{flex:1 1 auto;justify-content:space-between}
-.streamlined-ui .simulation-settings .level-control{display:flex;gap:3px;white-space:nowrap}
-.streamlined-ui .simulation-settings .control-title{font-size:12px;font-weight:650}
-.streamlined-ui .simulation-settings select{font-size:16px;font-weight:600;line-height:1.3;min-height:44px;margin:0;padding:6px 2px;border:0;border-radius:6px;background:#f3f4f4;color:#252729;min-width:0}
-.streamlined-ui .simulation-settings #level-select{width:54px}.streamlined-ui .simulation-settings #evolution-mode{width:90px}
-.streamlined-ui .simulation-settings .check-control{padding:0;gap:4px;min-height:44px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer}
-.streamlined-ui .simulation-settings .condition-button{min-width:44px;width:44px;min-height:44px;padding:6px 3px;margin:0;border:0;background:transparent;color:#535b5f;font-size:12px;white-space:nowrap}
-.streamlined-ui .compact-options{display:flex;align-items:center;flex-wrap:nowrap;gap:4px;min-height:44px;position:relative;min-width:0}
-.streamlined-ui .compact-options .filter-chips{display:flex;flex:0 0 auto;gap:1px;margin:0;min-width:0}
-.streamlined-ui .compact-options .filter-chips button{position:relative;min-width:44px;min-height:44px;padding:6px 5px;border:0;border-radius:0;background:transparent;color:#92989b;font-size:11px;font-weight:400;white-space:nowrap}
-.streamlined-ui .compact-options .filter-chips button.selected{background:transparent;color:#252729;font-weight:750}
-.streamlined-ui .compact-options .filter-chips button.selected::after{content:"";position:absolute;bottom:5px;left:calc(50% - 9px);width:18px;height:2px;background:#252729}
-.streamlined-ui .compact-sort{flex:0 0 116px;width:116px;min-width:0;margin:0 0 0 auto;padding:6px 1px;min-height:44px;background:transparent;border:0;border-radius:0;color:#737a7e;font-size:16px;font-weight:400}
-.streamlined-ui .compact-options .type-filter{flex:1 1 auto;min-width:0;max-width:82px;margin:0;padding:0;border:0;font-size:11px}
-.streamlined-ui .compact-options .type-filter>summary{display:block;min-height:44px;line-height:32px;padding:6px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;list-style:none;cursor:pointer}
-.streamlined-ui .compact-options .type-filter>summary::after{content:"⌄";padding-left:3px}.streamlined-ui .compact-options .type-filter>summary::-webkit-details-marker{display:none}
-.streamlined-ui .compact-options .type-filter[open]>summary{background:#f5f6f6;border-radius:4px}
-.streamlined-ui .compact-options .type-options{position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:20;max-height:310px;overflow:auto;background:#fff;border:1px solid #e0e3e4;border-radius:8px;padding:12px;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;box-shadow:0 4px 14px #0000000a}
-.streamlined-ui .compact-options .type-options button{grid-column:1/-1;min-height:44px}.streamlined-ui .compact-options .type-options label{min-height:44px;display:flex;align-items:center;gap:5px}
+ .auxiliary-controls {margin:0 0 20px;padding:0 0 10px;border-bottom:1px solid var(--line)}
+/* Other tabs share the editorial hierarchy, open surfaces and fine rules. */
+.recipe-picker,.source-card,.compare-card,.relation-card,.recipe-ingredient-card {background:#fff;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;padding:20px 0;min-width:0}
+.recipe-picker {gap:14px;margin:0 0 20px}
+.recipe-symbol {display:none}
+.recipe-fields {gap:12px}
+.recipe-fields label,.map-picker {font-size:12px;color:var(--muted)}
+.recipe-quantities div,.daily-yield,.slot-field,.notice,.extra-details,.empty-message,.nature-effects {background:var(--soft);color:var(--muted);border-color:var(--line);box-shadow:none;border-radius:6px}
+.recipe-total b {color:var(--ink)}
+.source-grid {gap:0 30px}
+.source-card {padding:24px 0;overflow-wrap:anywhere}
+.source-card :is(p,li),.member-meta,.member-owned-skills small,.level-text,.quantity-note {color:var(--muted)}
+.source-card h3 {margin:0 0 12px;font-size:17px;font-weight:600}
+.map-picker {display:block;margin:0 0 14px}
+.map-picker select {display:block;width:100%;margin-top:6px}
+#view-maps>.filter-chips {border-bottom:1px solid var(--line);margin-bottom:14px}
+#map-ingredients {margin-top:24px}
+.dynamic-favorites {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:12px}
+.dynamic-favorites select {min-width:0}
+.map-note {font-size:12px;line-height:1.6;color:var(--muted)}
+.member-grid {grid-auto-rows:1fr}
+.member-grid .member-card {padding:12px 0;gap:6px;border-top:1px solid var(--line)}
+.member-card .compact-identity {display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 24px;gap:4px;min-width:0;min-height:0}
+.member-card .mini-person {grid-column:1/-1;display:block;min-width:0;min-height:24px;height:auto;margin:0;padding:0;background:none;border:0;text-align:left;white-space:normal}
+.member-card .mini-person-name {color:var(--ink);font-size:15px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.member-card .card-level {grid-column:1}
+.member-card .mini-nature {grid-column:2;width:auto;height:auto;min-height:24px}
+.member-card .compact-secondary {min-height:0;white-space:normal}
+.member-card .compact-secondary:has(.card-nickname:empty) {display:none}
+.member-owned-skills {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;min-height:0}
+.member-owned-skills .mini-skill {min-height:22px;padding:2px 0;font-size:10px}
+.member-card .member-detail {min-height:44px;margin-top:auto;background:var(--soft);border:0;color:var(--ink)}
+.member-foods .ingredient-mini-icon {width:22px;height:22px;object-fit:contain;vertical-align:middle}
+.member-foods .letter-slots {font-size:14px;color:var(--muted)}
+.food-collection-group {margin:18px 0 24px;padding-top:12px;border-top:1px solid var(--line)}
+.food-collection-group h3 {margin:0 0 10px;font-size:17px}
+.food-collection-group h3 small {font-size:11px;font-weight:400;color:var(--muted);margin-left:5px}
+.notice.error {background:#fff4f2;color:#96544b}
+.skill-picker,.skill-picker-header {background:#fff;border-color:var(--line)}
+.skill-choice-group h4,.species-field>small,.eyebrow {color:var(--muted)}
+.skill-slot[aria-expanded=true],.skill-choice[aria-pressed=true] {outline-color:#777c80}
+.assignment-fields label {background:var(--soft);border-color:var(--line)}
+dialog {color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 44px #00000014}
+dialog .dialog-head,dialog .dialog-footer {background:#fff;border-color:var(--line)}
+dialog::backdrop {background:#0005;backdrop-filter:none}
+dialog h2 {font-size:20px;letter-spacing:-.3px}
+.help-stats dd {color:var(--ink)}
+footer,footer>span:first-child {color:var(--muted)}
+/* Same six-destination navigation rhythm as Resource Journal. */
+.tabs {position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));max-width:840px;margin:0 auto;padding:6px 10px calc(10px + env(safe-area-inset-bottom));gap:0;background:#fffffff5;border:0;border-top:1px solid var(--line);box-shadow:none;backdrop-filter:blur(16px)}
+.tabs .tab {position:relative;min-width:0;min-height:52px;margin:0;padding:6px 0;border:0;border-radius:0;background:transparent;color:#8b9094;font-size:12px;font-weight:400;line-height:1.4;white-space:nowrap}
+.tabs .tab.active {background:transparent;color:var(--ink);font-weight:650}
+.tabs .tab.active::before {content:"";position:absolute;top:0;left:calc(50% - 8px);width:16px;height:2px;background:#222}
+.tabs .tab.active::after {display:none}
+@media(min-width:600px) {.harvest-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:800px) {.harvest-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:359px) {
+ :root {--page-gutter:14px}
+ .site-header {width:calc(100% - 28px)}
+ .harvest-grid {column-gap:12px}
+ .compact-level-evolution {grid-template-columns:72px minmax(64px,1fr) minmax(100px,1.2fr);gap:4px}
+ .ribbon-control {gap:3px}
+ .ribbon-control>span {font-size:10px}
+ .compact-options {grid-template-columns:minmax(0,1fr) 100px;gap:3px}
+ .compact-options .filter-chips {gap:1px}
+ .filter-chips button {font-size:11px}
+ .compact-options:has(.type-filter) {grid-template-columns:minmax(0,1fr) 100px}
+ .compact-options .type-filter {grid-column:1/-1;grid-row:2}
+ .species-name-main {font-size:13px}
+ .level-ribbon {gap:3px}
+ .card-level,.sleep-ribbon {font-size:10px}
+ .mini-nature {font-size:10px;gap:2px}
+ .food-divider .food-title-text {font-size:13px}
+ .berry-yield b {font-size:24px}
+ .source-grid {grid-template-columns:1fr}
+}
 .streamlined-ui [data-food-candidates]{cursor:pointer}.streamlined-ui [data-food-candidates]:focus-visible,.streamlined-ui summary:focus-visible{outline:2px solid #535b5f;outline-offset:3px}
 .streamlined-ui .candidate-note{font-size:12px;color:#737a7e;line-height:1.7;margin:0 0 10px}
 .streamlined-ui .candidate-conditions{font-size:12px;border-bottom:1px solid #eaecee;margin:0 0 4px;padding-bottom:6px}
@@ -154,105 +218,7 @@ main{width:100%;margin-left:auto;margin-right:auto}
 .streamlined-ui .candidate-meta .preview-composition{font-size:17px;gap:2px}.streamlined-ui .candidate-foods .mini-slots{font-size:16px;gap:1px}.streamlined-ui .candidate-foods .mini-slots>span{font-size:16px}
 .streamlined-ui .candidate-daily{margin-left:auto;white-space:nowrap;color:#252729}.streamlined-ui .candidate-daily b{font-size:24px;font-variant-numeric:tabular-nums;line-height:1}.streamlined-ui .candidate-daily small{font-size:10px;margin-left:3px;color:#818689}
 .streamlined-ui .candidate-empty{padding:20px 0;font-size:13px;color:#737a7e}
-@media(max-width:355px){.streamlined-ui .simulation-settings .simulation-group,.streamlined-ui .compact-level-evolution,.streamlined-ui .compact-camp-conditions{gap:2px}.streamlined-ui .simulation-settings #level-select{width:50px}.streamlined-ui .simulation-settings #evolution-mode{width:84px}.streamlined-ui .simulation-settings .control-title,.streamlined-ui .simulation-settings .check-control{font-size:11px}.streamlined-ui #view-berries .compact-options{flex-wrap:wrap}.streamlined-ui #berries-filters{flex:1 0 100%}.streamlined-ui .compact-options .filter-chips button{padding:6px 4px}.streamlined-ui .site-header{padding:16px 14px}.streamlined-ui .assignment-header h2{font-size:24px}}
 
-.streamlined-ui #view-board,.streamlined-ui #view-berries{padding-top:12px}
-.streamlined-ui #view-board .assignment-header>.section-top{margin:0 0 3px}
-
-/* Approved food heading: name/rule then composition, with one right-aligned two-row metric.
-   The production wrapper remains in place to preserve the existing composition font rules. */
-.harvest-tile .food-card-head{display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:minmax(20px,auto) 28px;column-gap:7px;row-gap:1px;align-items:center;min-height:54px;width:100%;min-width:0}
-.harvest-tile .food-card-head>.food-card-title{grid-column:1;grid-row:1;min-width:0;margin:0;min-height:20px;align-self:center}
-.harvest-tile .food-card-head .food-title-text{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.35}
-.harvest-tile .food-card-head .food-divider::after{flex:1 0 6px;min-width:6px}
-.harvest-tile .food-card-head>.food-production-row{display:contents}
-.harvest-tile .food-card-head .food-production-row>.preview-composition,.harvest-tile .food-card-head .empty-food-top>span{grid-column:1;grid-row:2;align-self:center;justify-self:start}
-.harvest-tile .food-card-head .food-production-row>.compact-yield,.harvest-tile .food-card-head .empty-food-top>.target-yield{grid-column:2;grid-row:1 / span 2;align-self:stretch;justify-self:end;margin:0;padding:0;display:flex;align-items:center;justify-content:flex-end;text-align:right}
-.harvest-tile .food-card-head .food-production-row>.compact-yield{flex-direction:column;align-items:flex-end;justify-content:center}
-.harvest-tile .food-card-head .compact-yield small{max-width:65px;white-space:normal;text-align:right}
-.harvest-tile .food-card-head .target-yield{display:flex;align-items:center;justify-content:flex-end;align-self:stretch;text-align:right}
-.harvest-tile .food-card-head .target-yield b,.harvest-tile .food-card-head .empty-food-count{font-size:36px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.045em}
-/* Shared note-style operation area: independent evolution and ribbon conditions. */
-.streamlined-ui .site-header{justify-content:flex-start;min-height:78px;padding:22px 20px;border-bottom:1px solid #eceeef}
-.streamlined-ui .brand{font-size:19px;font-weight:750;color:#27292b;gap:10px}
-.streamlined-ui .brand .brand-mark{width:30px;height:30px;border-radius:0;box-shadow:none}
-.streamlined-ui .compact-sort{flex:0 0 100px;max-width:100px;font-size:16px;min-height:50px;color:#858b8d;letter-spacing:-.035em;transform:scale(.88);transform-origin:right center}
-.streamlined-ui .simulation-settings .simulation-group{flex-wrap:wrap;gap:2px 8px}
-.streamlined-ui .compact-level-evolution{flex-wrap:nowrap;gap:6px;min-width:0}
-.streamlined-ui .simulation-settings #evolution-mode{width:76px}
-.ribbon-control{display:flex;align-items:center;gap:4px;font-size:11px;color:#6c7478;white-space:nowrap}
-.streamlined-ui .simulation-settings #ribbon-mode{width:83px;min-width:0;padding:8px 3px;font-size:16px;min-height:44px}
-.streamlined-ui .compact-camp-conditions{margin-left:auto;min-height:36px}
-.member-foods .ingredient-mini-icon{width:22px;height:22px;object-fit:contain;vertical-align:middle}
-.food-collection-group{margin:12px 0 22px;border-top:1px solid #e5e7e8;padding-top:8px}
-.food-collection-group h3{margin:0 0 8px;font-size:16px;color:#27292b}.food-collection-group h3 small{font-weight:400;font-size:11px;color:#878e92;margin-left:5px}
-.food-collection-group .candidate-row{cursor:default}.food-collection-group .candidate-meta .preview-composition{font-size:16px}.food-collection-group .candidate-daily{margin-left:auto}
-@media(max-width:430px){.streamlined-ui .simulation-settings .simulation-group{display:grid;grid-template-columns:1fr}.streamlined-ui .compact-camp-conditions{justify-self:end}.streamlined-ui .compact-options .filter-chips{gap:2px}.streamlined-ui .compact-options .filter-chips button{padding-left:3px;padding-right:3px}.streamlined-ui .compact-level-evolution{gap:4px}.ribbon-control{gap:3px}}
-
-/* Restored ingredient header arrangement; identity tracks follow below. */
-.harvest-tile .restored-food-head{display:flex;flex-direction:column;justify-content:space-between;flex:none;min-width:0;width:100%;gap:0}
-.harvest-tile .restored-food-head>.food-card-title,.harvest-tile .restored-food-head>.food-production-row{flex:none;width:100%}
-
-/* Approved sibling-app design, independently authored from the inspected layout.
-   Reference: https://mokuhibi.github.io/resource-journal-test/ (2026-10-18). */
-body.journal-design{--ink:#202124;--muted:#777c80;--line:#ecedee;--soft:#f5f6f6;background:#fff;color:#202124;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif}
-.journal-design.streamlined-ui .site-header{width:calc(100% - 40px);max-width:800px;min-height:0;padding:0 0 20px;margin:24px auto 24px;border-bottom:1px solid #ecedee;justify-content:flex-start;align-items:flex-start}
-.journal-design.streamlined-ui .brand{display:flex;align-items:flex-start;gap:8px;font-size:16px;font-weight:600;letter-spacing:.2px;color:#202124}
-.journal-design.streamlined-ui .brand .app-icon{width:24px;height:24px;border-radius:0;box-shadow:none}
-.journal-design .brand-copy{display:flex;flex-direction:column;gap:5px}.journal-design .brand-copy b{font-size:16px;line-height:24px;font-weight:600;white-space:nowrap}.journal-design .brand-copy small{font-size:9px;line-height:13.5px;letter-spacing:1.5px;font-weight:400;color:#909497}
-.journal-design main{max-width:840px;padding:0 20px calc(120px + env(safe-area-inset-bottom));margin:0 auto}
-.journal-design .view,.journal-design.streamlined-ui #view-board,.journal-design.streamlined-ui #view-berries{padding-top:0}
-.journal-design .section-top h2,.journal-design.streamlined-ui .assignment-header h2,.journal-design #view-cooking>.section-top h2,.journal-design #view-maps>.section-top h2{font-size:28px;font-weight:700;line-height:1.3;letter-spacing:-.3px;color:#202124}
-.journal-design .section-top,.journal-design.streamlined-ui #view-board .assignment-header>.section-top{align-items:flex-start;min-height:44px;margin:0 0 16px}
-.journal-design .button{background:#f5f6f6;color:#202124;border:1px solid transparent;border-radius:6px;box-shadow:none;min-height:44px;font-weight:500}
-.journal-design :is(input:not([type=checkbox]),select,textarea){background:#fff;border:1px solid #dcdddf;border-radius:6px;color:#202124;font-size:16px;min-height:44px}
-.journal-design .compact-sort{background:none;border:0;color:#777c80}.journal-design .condition-button{color:#777c80}.journal-design .food-divider::after,.journal-design .food-divider::before{background:#ecedee}
-.journal-design .tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;background:#fffffff5;border-top:1px solid #ecedee;box-shadow:none;padding:6px 10px calc(10px + env(safe-area-inset-bottom));max-width:840px;backdrop-filter:blur(16px)}
-.journal-design .tabs .tab{font-size:12px;line-height:1.4;font-weight:400;color:#8b9094;min-height:52px;padding:6px 0;white-space:nowrap;border:0;border-radius:0;background:none}
-.journal-design .tabs .tab.active{font-weight:650;color:#202124}.journal-design .tabs .tab.active::before{width:16px;left:calc(50% - 8px);height:2px;background:#222}
-/* Fixed tracks: name/form, then Lv + ribbon opposite nature. */
-.journal-design .harvest-tile :is(.restored-food-head,.berry-card-head){display:flex;flex-direction:column;justify-content:space-between;height:54px;min-height:54px;flex:none;gap:0;min-width:0;width:100%}
-.journal-design .harvest-tile .assignment-identity{display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-rows:36px 28px;gap:2px;min-height:66px;align-items:center}
-.journal-design .harvest-tile .assignment-identity>.mini-person{grid-column:1/-1;grid-row:1;min-width:0;height:36px;min-height:36px;padding:0;margin:0;align-self:stretch;overflow:visible}
-.journal-design .harvest-tile .assignment-identity .mini-person-name{display:grid;grid-template-rows:20px 14px;gap:2px;height:36px;min-width:0;line-height:20px;white-space:normal;overflow:visible;letter-spacing:0}
-.journal-design .species-name-main{display:block;min-width:0;font-size:15px;font-weight:700;line-height:20px;white-space:nowrap;overflow-wrap:normal}
-.journal-design .species-name-form{display:block;min-width:0;font-size:10px;font-weight:400;line-height:14px;color:#777c80;letter-spacing:0;white-space:nowrap}
-.journal-design .harvest-tile .assignment-identity>.level-ribbon{grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:flex-start;gap:3px;min-width:0;white-space:nowrap}
-.journal-design .level-ribbon .card-level{flex:none;font-size:11px}.journal-design .level-ribbon .sleep-ribbon{flex:none;font-size:10px;gap:1px}.journal-design .level-ribbon .sleep-ribbon svg{width:8px;height:11px}
-.journal-design .harvest-tile .assignment-identity>.mini-nature{grid-column:2;grid-row:2;justify-self:end;display:flex;flex-wrap:nowrap;gap:3px;width:max-content;min-width:40px;max-width:none;min-height:26px;padding:2px 3px}
-.journal-design .harvest-tile .mini-nature :is(.up,.down){color:#202124;white-space:nowrap;font-size:11px}.journal-design .mini-nature .up>.nature-symbol{color:#b34a45}.journal-design .mini-nature .down>.nature-symbol{color:#346da6}
-/* Visible everyday settings; compact two-row controls with 44px tap targets. */
-.journal-design.streamlined-ui .site-header{margin:18px auto 14px;padding-bottom:14px}
-.journal-design .section-top,.journal-design.streamlined-ui #view-board .assignment-header>.section-top{align-items:center;margin:0 0 8px;min-height:44px}
-.journal-design .section-top h2,.journal-design.streamlined-ui .assignment-header h2,.journal-design #view-cooking>.section-top h2,.journal-design #view-maps>.section-top h2{font-size:26px;line-height:1.3}
-.journal-design.streamlined-ui #share-open{min-height:44px;min-width:44px;padding:6px 10px;font-size:12px}
-.journal-design.streamlined-ui .simulation-settings .simulation-group{display:grid;grid-template-columns:minmax(0,1fr);gap:0;min-width:0}
-.journal-design.streamlined-ui .compact-level-evolution{display:grid;grid-template-columns:72px minmax(70px,1fr) minmax(104px,1.25fr);gap:5px;min-width:0;width:100%}
-.journal-design.streamlined-ui .simulation-settings #evolution-mode{width:100%}
-.journal-design .ribbon-control{display:flex;font-size:10px;gap:3px;min-width:0}
-.journal-design.streamlined-ui .simulation-settings #ribbon-mode{flex:1;width:0;min-width:0;padding:6px 2px}
-.journal-design.streamlined-ui .compact-camp-conditions{width:100%;margin:0;justify-content:space-between;gap:8px;min-height:44px}
-.journal-design.streamlined-ui .simulation-settings .condition-button{width:52px;min-width:52px;color:#777c80}
-.journal-design.streamlined-ui .compact-options{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:0 4px;min-height:44px}
-.journal-design.streamlined-ui .compact-options .filter-chips{min-width:0;gap:0;grid-column:1;grid-row:1}
-.journal-design.streamlined-ui .compact-options .filter-chips button{min-width:44px;padding:6px 2px;flex:1}
-.journal-design .sort-control{position:relative;grid-column:2;grid-row:1;width:92px;height:44px;min-width:0}
-.journal-design.streamlined-ui .sort-control>.compact-sort{position:absolute;right:0;top:0;margin:0;width:118px;max-width:none;min-height:58px;height:58px;padding:6px 2px;font-size:16px;transform:scale(.76);transform-origin:right top;border:0;background:none}
-.journal-design.streamlined-ui .compact-options:has(.type-filter){grid-template-columns:minmax(132px,1fr) minmax(0,70px) 92px;gap:0 3px}
-.journal-design.streamlined-ui .compact-options:has(.type-filter) .sort-control{grid-column:3}
-.journal-design.streamlined-ui .compact-options .type-filter{grid-column:2;grid-row:1;min-width:0;max-width:100%;width:100%}
-@media(max-width:359px){
- .journal-design main{padding-left:14px;padding-right:14px}.journal-design.streamlined-ui .site-header{width:calc(100% - 28px)}
- .journal-design .harvest-grid{column-gap:12px}
- .journal-design .level-ribbon .card-level{font-size:10px}.journal-design .level-ribbon .sleep-ribbon{font-size:9px}.journal-design .harvest-tile .mini-nature :is(.up,.down){font-size:10px}
- .journal-design.streamlined-ui .compact-options:has(.type-filter){grid-template-columns:minmax(0,1fr) 92px;gap:0 4px}
- .journal-design.streamlined-ui .compact-options:has(.type-filter) .sort-control{grid-column:2}
- .journal-design.streamlined-ui .compact-options .type-filter{grid-column:1/-1;grid-row:2;width:100%;max-width:none}
- .journal-design.streamlined-ui .compact-options .type-filter>summary{width:max-content;max-width:100%}
- .journal-design .harvest-tile .berry-yield .berry-type{font-size:9px;padding:2px 3px}
-}
-
-/* License text is unmodified plain text, with an always-visible way back. */
 #license-dialog{width:min(720px,calc(100% - 24px));max-height:calc(100dvh - 24px);padding:0;overflow:hidden;color:var(--ink);background:#fff}
 #license-dialog[open]{display:flex;flex-direction:column}
 #license-dialog .dialog-head{flex:none;padding:14px 16px;gap:12px;margin:0;border-bottom:1px solid var(--line);padding-top:max(14px,env(safe-area-inset-top));background:#fff}
@@ -262,11 +228,3 @@ body.journal-design{--ink:#202124;--muted:#777c80;--line:#ecedee;--soft:#f5f6f6;
 #license-text{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.65 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;color:inherit}
 #license-error:empty{display:none}
 #license-error{color:var(--red)}
-
-/* Food-tab progress changes only the ingredient label; preserve header geometry. */
-.journal-design .harvest-tile.completion-enabled .food-title-text{color:#202124}
-.journal-design .harvest-tile.completion-enabled.unassigned .food-title-text{color:#a2a8ab}
-.journal-design .harvest-tile.completion-enabled.ingredient-complete .food-title-text{color:#C0392B}
-.journal-design .harvest-tile .ingredient-completion-name{position:relative;display:block;height:44px;min-height:44px;margin:-11.5px 0;padding:0;background:transparent;border:0;border-radius:0;text-align:left;font-family:inherit;line-height:21px;box-shadow:none;cursor:pointer}
-.journal-design .harvest-tile .ingredient-completion-name[aria-disabled="true"]{cursor:default}
-.journal-design .harvest-tile .ingredient-completion-name:focus-visible{outline:1px solid #777c80;outline-offset:1px}
