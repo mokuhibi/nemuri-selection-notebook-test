@@ -1,27 +1,27 @@
 /* Export geometry only. Card appearance / states are shared with note.css.
  * 576 CSS px × scale 3 = 1728 PNG pixels. Never used by the live app. */
-body.share-sheet {width:576px;max-width:none;margin:0;padding:8px;background:#fff;color:var(--ink)}
+body.share-sheet {width:576px;max-width:none;margin:0;padding:8px;background:var(--mh-surface);color:var(--ink)}
 .share-sheet .harvest-grid {grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(160px,1fr);gap:12px 8px}
-.share-sheet .harvest-tile {padding:0 0 6px;gap:3px}
+.share-sheet .harvest-tile {border-radius:0;padding:0 0 6px;gap:3px}
 .share-sheet .restored-food-head,.share-sheet .berry-card-head {height:54px;min-height:54px}
-.share-sheet .food-divider .food-title-text {font-size:12px;line-height:18px}
+.share-sheet .food-divider .food-title-text {font-size:var(--mh-font-caption);line-height:18px}
 .share-sheet .food-card-title.food-divider {min-height:20px;gap:4px}
 .share-sheet .preview-composition {font-size:18px;gap:2px}
 .share-sheet .target-yield b,.share-sheet .empty-food-count {font-size:29px}
 .share-sheet .berry-yield b {font-size:24px;font-size:clamp(20px,16cqi,24px)}
-.share-sheet .berry-type {font-size:9px;padding:3px}
+.share-sheet .berry-type {font-size:var(--mh-font-export);padding:3px}
 .share-sheet .assignment-identity {grid-template-rows:32px 24px;min-height:58px;gap:2px}
 .share-sheet .assignment-identity>.mini-person {height:32px;min-height:32px}
 .share-sheet .assignment-identity .mini-person-name {height:32px;grid-template-rows:18px 12px;gap:2px}
-.share-sheet .species-name-main {font-size:14px;line-height:18px}
-.share-sheet .species-name-form {font-size:10px;line-height:12px}
+.share-sheet .species-name-main {font-size:var(--mh-font-card);line-height:18px}
+.share-sheet .species-name-form {font-size:var(--mh-font-micro);line-height:12px}
 .share-sheet .level-ribbon {gap:3px}
-.share-sheet .card-level {font-size:10px}
-.share-sheet .sleep-ribbon {font-size:9px;gap:1px}
-.share-sheet .mini-nature {font-size:9px;gap:3px;min-height:23px;padding:1px 0}
-.share-sheet .mini-skill {font-size:9px;min-height:18px;padding:1px 0}
+.share-sheet .card-level {font-size:var(--mh-font-micro)}
+.share-sheet .sleep-ribbon {font-size:var(--mh-font-export);gap:1px}
+.share-sheet .mini-nature {font-size:var(--mh-font-export);gap:3px;min-height:23px;padding:1px 0}
+.share-sheet .mini-skill {font-size:var(--mh-font-export);min-height:18px;padding:1px 0}
 .share-sheet .fixed-skills,.share-sheet .skill-row {gap:2px}
-.share-sheet .composition-design>.ingredient-watermark {width:115px;height:115px;right:1px;top:28px;opacity:.12}
-.share-sheet .export-subtitle {font-size:11px;font-weight:400;line-height:1.6;white-space:pre-line;color:var(--muted);margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid var(--line)}
+.share-sheet .composition-design>.ingredient-watermark {width:115px;height:115px;right:1px;top:28px;opacity:var(--mh-watermark-opacity)}
+.share-sheet .export-subtitle {font-size:var(--mh-font-meta);font-weight:400;line-height:1.6;white-space:pre-line;color:var(--muted);margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid var(--line)}
 .share-sheet .export-subtitle>strong {font-size:13px;font-weight:600;color:var(--ink)}
-.share-sheet .export-footnote {font-size:9px;line-height:1.6;white-space:pre-wrap;color:var(--muted);margin:12px 0 0;padding:8px 0 0;border-top:1px solid var(--line)}
+.share-sheet .export-footnote {font-size:var(--mh-font-export);line-height:1.6;white-space:pre-wrap;color:var(--muted);margin:12px 0 0;padding:8px 0 0;border-top:1px solid var(--line)}
